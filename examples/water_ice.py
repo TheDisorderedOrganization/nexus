@@ -6,7 +6,7 @@ import nexus
 #     No need to provide the lattice vectors, the code will automatically detect them
 #     with the keyword 'Lattice' in the XYZ file.
 #     The code will crash if the file is not an extended XYZ file
-trajectory = "./examples/inputs/waterM2825-5kbar.xyz"
+trajectory = "./inputs/waterM2825-5kbar.xyz"
 
 # Initialize settings
 settings = nexus.settings.Settings(extension="OO")
@@ -19,7 +19,7 @@ settings.project_name.set_value("water_ice")
 settings.extension.set_value("OO")
 
 # Set export directory
-settings.export_directory.set_value(f"./examples/export/")
+settings.export_directory.set_value(f"./export/")
 
 # Set path to XYZ file
 settings.path_to_xyz_file.set_value(trajectory)

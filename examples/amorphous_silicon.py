@@ -6,7 +6,7 @@ import nexus
 #     No need to provide the lattice vectors, the code will automatically detect them
 #     with the keyword 'Lattice' in the XYZ file.
 #     The code will crash if the file is not an extended XYZ file
-trajectory = "./examples/inputs/aSi-compress_GAP-18_10GPa.xyz"
+trajectory = "./inputs/aSi-compress_GAP-18_10GPa.xyz"
 
 # Initialize settings
 settings = nexus.settings.Settings(extension="SiSi")
@@ -19,7 +19,7 @@ settings.project_name.set_value("amorphous_silicon")
 settings.extension.set_value("SiSi")
 
 # Set export directory
-settings.export_directory.set_value(f"./examples/export/")
+settings.export_directory.set_value(f"./export/")
 
 # Set path to XYZ file
 settings.path_to_xyz_file.set_value(trajectory)
@@ -64,9 +64,7 @@ settings.cluster_settings.set_cluster_parameter("criteria", "distance")
 # Set cluster connectivities to look for
 settings.cluster_settings.set_cluster_parameter("connectivity", ["Si", "Si"])
 # Set polyhedra to look for
-settings.cluster_settings.set_cluster_parameter(
-    'polyhedra', [[4, 4], [5, 5], [6, 6]]
-)
+settings.cluster_settings.set_cluster_parameter("polyhedra", [[4, 4], [5, 5], [6, 6]])
 
 # Run the main function with the provided settings
 print("Processing the trajectory with 'distance' criteria ...")
