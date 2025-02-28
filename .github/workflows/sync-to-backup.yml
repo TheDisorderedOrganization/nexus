@@ -1,0 +1,30 @@
+name: Push to Both Repositories
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  push-to-both:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Git
+        run: |
+          git config --global user.name 'jperradin'
+          git config --global user.email 'julien.perradin@protonmail.com'
+
+      - name: Add backup remote
+        run: git remote add backup https://github.com/jperradin/backup-nexus.git
+
+      - name: Push to both repositories
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BACKUP_TOKEN: ${{ secrets.BACKUP_TOKEN }}
+        run: |
+          git push origin main
+          git push backup main
