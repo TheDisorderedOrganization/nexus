@@ -23,8 +23,9 @@ jobs:
 
       - name: Push to both repositories
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BACKUP_TOKEN: ${{ secrets.BACKUP_TOKEN }}
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
+          git remote set-url origin https://jperradin:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/TheDisorderedOrganization/nexus.git
+          git remote set-url backup https://jperradin:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/jperradin/backup-nexus.git
           git push origin main
           git push backup main
