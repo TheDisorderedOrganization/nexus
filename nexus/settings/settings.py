@@ -125,7 +125,7 @@ class Settings:
 
         # Initialize software settings
         self.version: Parameter = Parameter(
-            "version", "1.0.1"
+            "version", "1.0.2"
         )  # Version of the software
         self.quiet: Parameter = Parameter("quiet", False)  # Do not print any settings
         self.overwrite_results: Parameter = Parameter(
