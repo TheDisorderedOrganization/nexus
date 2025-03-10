@@ -130,7 +130,9 @@ def get_default_settings(criteria="bond") -> dict:
             "connectivity": ["Si", "O", "Si"],
             "criteria": "bond",
             "polyhedra": [[4, 4], [4, 5], [5, 5], [5, 6], [6, 6], [6, 7]],
+            "find_extra_clusters": True,
             "extra_clusters": "stishovite",
+            
         }
     elif criteria == "distance":
         dict_cluster_settings = {
@@ -138,6 +140,7 @@ def get_default_settings(criteria="bond") -> dict:
             "criteria": "distance",  # WARNING: if this criteria is set,
             # the pair cutoff Si-Si will be used as the distance cutoff between the nodes.
             "polyhedra": [[4, 4], [4, 5], [5, 5], [5, 6], [6, 6], [6, 7]],
+            "find_extra_clusters": True,
             "extra_clusters": "stishovite",
         }
     else:

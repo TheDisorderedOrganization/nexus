@@ -17,3 +17,4 @@ my_tests/
 ./assets/Logo_Nexus-CAT_RVB_3.png
 launch-nexus-quick-test.py
 .readthedocs.yml
+demo/

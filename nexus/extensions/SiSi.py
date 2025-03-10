@@ -94,6 +94,7 @@ def get_default_settings(criteria="distance") -> dict:
                 [8, 9],
                 [9, 9],
             ],
+            "find_extra_clusters": True,
             "extra_clusters": ["LD", "HD", "VHD", "HV"],
         }
     else:

@@ -78,7 +78,10 @@ def main(settings):
     connectivities = module.get_connectivity(settings.cluster_settings.get_value())
     
     # Check if there any extra clustering method in the extension
-    extra_function_to_call = module.EXTRA_CLUSTERING_METHODS
+    if settings.cluster_settings.get_value()['find_extra_clusters']:
+        extra_function_to_call = module.EXTRA_CLUSTERING_METHODS
+    else:
+        extra_function_to_call = False
         
     # Setting the for loop with user settings
     if settings.range_of_frames.get_value() is not None:

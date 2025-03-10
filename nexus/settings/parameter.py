@@ -151,7 +151,7 @@ class ClusterParameter(Parameter):
         -------
             ValueError: If the provided key is not found or the new value is invalid.
         """
-        if key not in ["connectivity", "main_former", "criteria", "polyhedra"]:
+        if key not in ["connectivity", "main_former", "criteria", "polyhedra", "extra_clusters", "find_extra_clusters"]:
             raise ValueError(f"\tERROR: Cluster parameter '{key}' couldn't be found in cluster settings.")
         elif key == "criteria":
             if new_value != "distance" and new_value != "bond":
@@ -162,6 +162,12 @@ class ClusterParameter(Parameter):
         elif key == "polyhedra":
             if not isinstance(new_value, list):
                 raise ValueError(f"\tERROR: Cluster parameter '{key}' can only be set as a list of a list of coordinations (ie [[4, 4], [5, 5]]), not {new_value}.")
+        elif key == "extra_clusters":
+            if not isinstance(new_value, list):
+                raise ValueError(f"\tERROR: Cluster parameter '{key}' can only be set as a list of extra cluster(s) to find, not {new_value}.")
+        elif key == "find_extra_clusters":
+            if not isinstance(new_value, bool):
+                raise ValueError(f"\tERROR: Cluster parameter '{key}' can only be set as a boolean, not {new_value}.")
         for k, v in self.value.items():
             if k == key:
                 self.value[key] = new_value

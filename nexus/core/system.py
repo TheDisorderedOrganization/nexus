@@ -780,6 +780,10 @@ class System:
         function_list = [o for o in inspect.getmembers(module) if inspect.isfunction(o[1])]
         function_names = [name for name, _ in function_list]
         
+        enable = self.settings.cluster_settings.get_value()['find_extra_clusters']
+        if not enable:
+            return
+        
         if 'find_extra_clusters' in function_names:
             cluster_settings = self.settings.cluster_settings.get_value()
             criteria = cluster_settings['criteria']
