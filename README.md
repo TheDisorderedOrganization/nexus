@@ -10,12 +10,15 @@
 </div>
 
 ## ⇁ TOC
-- [Description and features](#-description-and-features)
-- [Installation](#-installation)
-- [Getting started](#-getting-started)
-- [Documentation](#-documentation)
-- [Contributing](#-contributing)
-- [License](#-license)
+- [NEXUS-CAT](#nexus-cat)
+        - [Cluster Analysis Toolkit](#cluster-analysis-toolkit)
+  - [⇁ TOC](#-toc)
+  - [⇁ Description and features](#-description-and-features)
+  - [⇁ Installation](#-installation)
+  - [⇁ Getting started](#-getting-started)
+  - [⇁ Documentation](#-documentation)
+  - [⇁ Contributing](#-contributing)
+  - [⇁ License](#-license)
 
 ## ⇁ Description and features
 
@@ -53,15 +56,33 @@ P_∞ = \begin{cases}0 & \text{if } \Pi = 0 \\\frac{s_{max}}{N} & \text{if } \Pi
 
 ## ⇁ Installation
 
-To install `nexus`, first clone this repository as you please, for example with SSH:
+### Basic installation
+
+To install `nexus-cat` as a package, you can use pip:
+
+```bash
+pip install nexus-cat
+```
+
+Note: the package does not auto upgrade himself, please run the following command to upgrade to the latest version:
+
+```bash
+pip install nexus-cat --upgrade
+```
+
+### Installation from the source code
+
+If you want to install the package from the source code to implement your extensions for example, you can clone the repository:
 
 ```bash
 git clone git@github.com:jperradin/nexus.git
 ```
-Then you can use pip, it will install dependencies and the main package in your Python environment:
+
+Then install the package in development mode:
 
 ```bash
-pip install nexus-cat
+cd nexus
+pip install -e .
 ```
 
 ## ⇁ Getting started
