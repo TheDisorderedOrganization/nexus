@@ -64,7 +64,7 @@ To install `nexus-cat` as a package, you can use pip:
 pip install nexus-cat
 ```
 
-Note: the package does not auto upgrade himself, please run the following command to upgrade to the latest version:
+Note: the package does not auto upgrade itself, please run the following command to upgrade to the latest version:
 
 ```bash
 pip install nexus-cat --upgrade
