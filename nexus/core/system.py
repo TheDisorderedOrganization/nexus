@@ -74,6 +74,7 @@ class System:
             settings (Settings): Settings object containing the list of all the parameters.
         """
         self.settings : object = settings   # Settings object containing the list of all the parameters
+        self.project_name = settings.project_name.get_value()
         self.atoms : list = []              # List of all the atoms 
         self.box : object = None               # The Box object containing the lattice information at each frame
         self.clusters : list = []           # List of the all the clusters of the system
@@ -585,14 +586,14 @@ class System:
         
         max_length = len(str(max(indices)))
         
-        with open(os.path.join(path_to_directory, f"{connectivity}_{self.frame}_all-in-one.xyz"), 'w') as output:
+        with open(os.path.join(path_to_directory, f"{self.project_name}-{connectivity}_{self.frame}_all-in-one.xyz"), 'w') as output:
             output.write(f"{sizes}\nLattice=\"{simulation_box[0]} 0.0 0.0 0.0 {simulation_box[1]} 0.0 0.0 0.0 {simulation_box[2]}\"\n")
         output.close()
         
-        with open(os.path.join(path_to_directory, f"{connectivity}_{self.frame}_all-in-one.xyz"), 'a') as output:
+        with open(os.path.join(path_to_directory, f"{self.project_name}-{connectivity}_{self.frame}_all-in-one.xyz"), 'a') as output:
             for cluster in clusters:
                 for atom, pos in zip(cluster.atoms, cluster.unwrapped_positions):
-                    output.write(f"{atom.element} {str(atom.id).ljust(max_length)} {pos[0]:5.5f} {pos[1]:5.5f} {pos[2]:5.5f}\n")
+                    output.write(f"{atom.element} {str(atom.id).ljust(max_length)} {pos[0]:5.5f} {pos[1]:5.5f} {pos[2]:5.5f} {cluster.root_id} {cluster.size} {cluster.order_parameter[0]:5.5f} {cluster.center_of_mass[0]:5.5f} {cluster.center_of_mass[1]:5.5f} {cluster.center_of_mass[2]:5.5f}\n")
         output.close()
         
     def decrypt_connectivity(self, connectivity):

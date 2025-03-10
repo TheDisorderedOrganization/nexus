@@ -18,3 +18,4 @@ my_tests/
 launch-nexus-quick-test.py
 .readthedocs.yml
 demo/
+export/

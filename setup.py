@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="nexus-cat",
-    version="1.0.3",
+    version="1.0.4",
     description="Nexus is a Cluster Analysing Toolkit package for atomic systems.",
     author="Julien Perradin",
     author_email="julien.perradin@protonmail.fr",

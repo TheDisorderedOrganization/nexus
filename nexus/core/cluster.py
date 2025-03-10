@@ -152,7 +152,7 @@ class Cluster:
             output.write(f"{len(self.atoms)}\nLattice=\"{simulation_box[0]} 0.0 0.0 0.0 {simulation_box[1]} 0.0 0.0 0.0 {simulation_box[2]}\"\n")
             max_length = max([len(str(atom.id)) for atom in self.atoms])
             for atom, pos in zip(self.atoms, self.unwrapped_positions):
-                output.write(f"{atom.element} {str(atom.id).ljust(max_length)} {pos[0]:5.5f} {pos[1]:5.5f} {pos[2]:5.5f}\n")
+                output.write(f"{atom.element} {str(atom.id).ljust(max_length)} {pos[0]:5.5f} {pos[1]:5.5f} {pos[2]:5.5f} {self.root_id} {self.size} {self.order_parameter[0]:5.5f} {self.center_of_mass[0]:5.5f} {self.center_of_mass[1]:5.5f} {self.center_of_mass[2]:5.5f}\n")
 
         output.close()
     
