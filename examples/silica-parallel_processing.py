@@ -55,6 +55,8 @@ def process_trajectory(trajectory, output, pressure):
     settings.cluster_settings.set_cluster_parameter(
         "polyhedra", [[4, 4], [4, 5], [5, 5], [5, 6], [6, 6]]
     )
+    settings.cluster_settings.set_cluster_parameter("find_extra_clusters", True)
+    
 
     # Run the main function for SiOz polyhedra clusters
     nexus.main(settings)

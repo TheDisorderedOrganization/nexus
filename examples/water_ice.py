@@ -63,6 +63,8 @@ settings.overwrite_results.set_value(True)
 settings.cluster_settings.set_cluster_parameter("criteria", "distance")
 # Set cluster connectivities to look for
 settings.cluster_settings.set_cluster_parameter("connectivity", ["O", "O"])
+settings.cluster_settings.set_cluster_parameter("find_extra_clusters", True)
+
 # Set polyhedra to look for
 # settings.cluster_settings.set_cluster_parameter(
 #     'polyhedra', [[4, 4], [5, 5], [6, 6]]

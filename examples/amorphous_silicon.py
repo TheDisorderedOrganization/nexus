@@ -65,6 +65,7 @@ settings.cluster_settings.set_cluster_parameter("criteria", "distance")
 settings.cluster_settings.set_cluster_parameter("connectivity", ["Si", "Si"])
 # Set polyhedra to look for
 settings.cluster_settings.set_cluster_parameter("polyhedra", [[4, 4], [5, 5], [6, 6]])
+settings.cluster_settings.set_cluster_parameter("find_extra_clusters", True)
 
 # Run the main function with the provided settings
 print("Processing the trajectory with 'distance' criteria ...")
