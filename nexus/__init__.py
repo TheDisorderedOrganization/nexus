@@ -1,29 +1,28 @@
 """
-Module: nexus
--------------
+REVE - Realistic Environment for Vitreous Exploration
+(also verre en verlan)
 
-This module initializes the main components of the application.
-
-Submodules:
------------
-    - core: Core functionalities of the application.
-    - data: Data handling functionalities.
-    - io: Input/Output functionalities.
-    - settings: Configuration settings for the application.
-    - utils: Utility functions for the application.
-
-Functions:
-----------
-    - main: The main entry point of the application.
+A package for working with large-scale molecular dynamics trajectories
+with a focus on memory efficiency and performance.
 """
 
-from . import core
-from . import data
-from . import io
-from . import settings
-from . import utils
+# Import core components
+from .core.node import Node
+from .core.frame import Frame
+from .core.system import System
+
+# Import IO components
+from .io.reader.reader_factory import ReaderFactory
+# from .io.writer.writer_factory import WriterFactory # TODO: implement writers
+
+# Import settings
+from .config.settings import Settings, SettingsBuilder, AnalysisSettings
+
+# Import main function
 from .main import main
 
-__version__ = "1.0.5"
+from .utils import print_title
 
-utils.print_title(__version__)
+__version__ = "0.0.1"
+
+print_title(__version__)

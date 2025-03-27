@@ -1,22 +1,10 @@
 """
-Core module for the Nexus project.
+Core components for the REVE package.
 
-This module initializes the core components of the Nexus application.
-
-Imports:
-    - Internal modules
+This module contains the fundamental data structures for representing
+nodes, frames, and other molecular dynamics components.
 """
 
-__all__ = [
-    "Atom",
-    "System",
-    "Box",
-    "Cutoff",
-    "Cluster"
-]
-
-from .atom      import Atom
-from .system    import System
-from .box       import Box
-from .cutoff    import Cutoff
-from .cluster   import Cluster
+from .node import Node
+from .frame import Frame
+from .system import System

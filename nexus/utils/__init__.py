@@ -1,14 +1,13 @@
 """
-Module: utils
--------------
+Utility components for the REVE package.
 
-This module initializes utility functions for the application.
-
-Functions:
-----------
-    - print_title: Prints a formatted title.
-    - generate_color_gradient: Generates a color gradient.
+This module contains utility functions and constants used throughout the package.
 """
 
-from .print_title import print_title
-from .generate_color_gradient import generate_color_gradient
+from .geometry import *
+from .aesthetics import *
+
+__all__ = [
+    'aesthetics',
+    'geometry',
+]
