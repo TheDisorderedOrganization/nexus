@@ -1,14 +1,12 @@
-from abc import ABC, abstractmethod
-from typing import Generator, List, Optional
-
+from typing import List
+from .base_analyzer import BaseAnalyzer
 from ..core.frame import Frame
 
-class BaseAnalyzer(ABC):
-    def __init__(self, frame_processed: List[Frame], verbose: bool = True) -> None:
-        self.frame_processed: List[Frame] = frame_processed
-        self.verbose: bool = verbose
 
-    @abstractmethod
+class LargestClusterSizeAnalyzer(BaseAnalyzer):
+    def __init__(self, frame_processed: List[Frame], verbose: bool = True) -> None:
+        super().__init__(frame_processed, verbose)
+
     def analyze(self) -> None:
         pass
 

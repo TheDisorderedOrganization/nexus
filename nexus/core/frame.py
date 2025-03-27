@@ -4,6 +4,7 @@ from typing import List, Dict, Optional
 
 from .node import Node
 from ..utils.geometry import wrap_positions
+from ..core.cluster import Cluster
 
 @dataclass(slots=True)
 class Frame:
@@ -18,6 +19,8 @@ class Frame:
         List of nodes in the frame
     lattice : np.ndarray
         Lattice of the frame
+    clusters : Optional[List[Cluster]]
+        List of clusters in the frame
     _data : Dict[str, np.ndarray]
         Internal data structure for node data (symbol, position)
     """
@@ -25,6 +28,7 @@ class Frame:
     nodes: List[Node]
     lattice: np.ndarray
     _data: Dict[str, np.ndarray]
+    clusters: Optional[List[Cluster]] = None
 
     def __post_init__(self):
         """ Initialisation after object creation """
@@ -89,12 +93,22 @@ class Frame:
         """ Get the wrapped positions of all nodes in the frame grouped by element """
         return {node.symbol: wrap_positions(np.array([node.position for node in self.nodes if node.symbol == node.symbol]), self.lattice) for node in self.nodes}
 
+    def get_clusters(self) -> List[Cluster]:
+        """ Get the clusters of the frame """
+        return self.clusters
+
+    def add_cluster(self, cluster: Cluster) -> None:
+        """ Add a cluster to the frame """
+        if self.clusters is None:
+            self.clusters = []
+        self.clusters.append(cluster)
+
     def __len__(self) -> int:
         """ Get the number of nodes in the frame """
         return len(self.nodes)
 
     def __str__(self) -> str:
-        return f"Frame {self.frame_id} (num_nodes={len(self.nodes)})"
+        return f"Frame {self.frame_id} (num_nodes={len(self.nodes)}, num_clusters={len(self.clusters)})"
 
     def __repr__(self) -> str:
         return f"Frame {self.frame_id} (num_nodes={len(self.nodes)})\n(first node: {(self.nodes[0].symbol, self.nodes[0].position) if len(self.nodes) > 0 else ''}\n(lattice=\n{self.lattice})\n"

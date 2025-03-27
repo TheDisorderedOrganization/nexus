@@ -34,6 +34,8 @@ class Node:
     position: np.ndarray = field(compare=False, repr=False)
     parent: Optional['Node'] = field(default=None, compare=False, repr=False)
     neighbors: List['Node'] = field(default_factory=list, compare=False, repr=False)
+    distances: Optional[List[float]] = field(default=None, compare=False, repr=False)
+    indices: Optional[List[int]] = field(default=None, compare=False, repr=False)
     velocity: Optional[np.ndarray] = field(default=None, compare=False, repr=False)
     mass: Optional[float] = field(default=None, compare=True, repr=True)
     correlation_length: Optional[float] = field(default=None, compare=True, repr=True)
@@ -70,6 +72,10 @@ class Node:
     def wrap_position(position: np.ndarray, lattice: np.ndarray) -> np.ndarray:
         """ Wrap position in a periodic box defined by the lattice """
         return wrap_position(position, lattice)
+
+    def add_neighbour(self, node: 'Node') -> None:
+        """ Add a node as a neighbor """
+        self.neighbors.append(node)
 
     def __str__(self) -> str:
         return f"Node {self.node_id} ({self.symbol})"

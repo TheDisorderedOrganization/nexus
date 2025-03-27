@@ -2,15 +2,13 @@ from typing import List
 
 # Internal imports
 from .node import Node
-from .frame import Frame
 from ..config.settings import Settings
 
 class Cluster:
-    def __init__(self, nodes: List[Node], connectivity: str, root_id: int, frame: Frame, size: int, settings: Settings) -> None:
+    def __init__(self, nodes: List[Node], connectivity: str, root_id: int, size: int, settings: Settings) -> None:
         self.nodes: List[Node] = nodes
         self.connectivity: str = connectivity
         self.root_id: int = root_id
-        self.frame: Frame = frame
         self.size: int = size
         self.settings: Settings = settings
 

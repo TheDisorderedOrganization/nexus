@@ -1,7 +1,9 @@
-from .settings import Settings, SettingsBuilder, AnalysisSettings
+from .settings import Settings, SettingsBuilder, AnalysisSettings, ClusteringSettings, LatticeSettings
 
 __all__ = [
     Settings,
     SettingsBuilder,
-    AnalysisSettings
+    AnalysisSettings,
+    ClusteringSettings,
+    LatticeSettings
 ]

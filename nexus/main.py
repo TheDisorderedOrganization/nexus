@@ -5,6 +5,8 @@ import os
 from .config.settings import Settings
 from .io.reader.reader_factory import ReaderFactory
 from .core.system import System
+from .analysis.clusters_finder import ClusterFinder
+from .analysis.analyzer_factory import AnalyzerFactory
 from .utils import *
 
 def main(settings: Settings):
@@ -31,14 +33,21 @@ def main(settings: Settings):
         "colour": "green"
     }
 
+    # Initialize analyzers
+    analyzers = []
+    for analyzer in settings.analysis.get_analyzers():
+        analyzers.append(AnalyzerFactory(frame_processed=[], verbose=settings.verbose).get_analyzer(analyzer))
+
+    print(analyzers)
+
     progress_bar = tqdm(enumerate(system.iter_frames()), total=total, desc="Parsing frames", unit="frame", **progress_bar_kwargs)
     for i, frame in progress_bar:
         if settings.lattice.apply_custom_lattice:
             frame.set_lattice(settings.lattice.custom_lattice)
         
         frame.initialize_nodes()
-        nodes = frame.nodes
-        print(nodes)
+        cluster_finder = ClusterFinder(frame, settings)
+        cluster_finder.find_neighbors()
 
 
     

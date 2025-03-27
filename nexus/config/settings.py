@@ -1,7 +1,7 @@
 import os
 from dataclasses import dataclass, field
 import numpy as np
-from typing import Tuple, Optional, List
+from typing import Tuple, Optional, List, Dict
 
 
 @dataclass
@@ -11,27 +11,36 @@ class ClusteringSettings:
     
     Attributes:
     """
-    criteria: str = "distance"
-    node_type1: str = "node1"
-    node_type2: str = "node2"
-    node_type3: str = "node3"
+    criteria: str = "distance" # "distance" or "bond"
+    node_types: List[str] = field(default_factory=lambda: ["A", "B"]) # List of node types
+    connectivity: List[str] = field(default_factory=lambda: ["A", "B", "A"]) # List of connectivity
+    cutoffs: Dict[str, float] = field(default_factory=lambda: {"AA": 1.0, "AB": 1.0, "BB": 1.0}) # Cutoffs for distance and bond criteria
 
-    if criteria == "distance":
-        connectivity: List[str] = field(default_factory=lambda: [node_type1, node_type2])
-    elif criteria == "bond":
-        connectivity: List[str] = field(default_factory=lambda: [node_type1, node_type2, node_type3])
-    else:
-        raise ValueError("Criteria must be 'distance' or 'bond'")
+    # Coordination number ie number of nearest neighbors
+    # - all_types: all types of nodes are considered A-AB, B-AB
+    # - same_type: only nodes of the same type are considered A-A, B-B
+    # - different_type: only nodes of the different types are considered A-B, B-A
+    
+    with_coordination_number: bool = False # Whether to calculate the coordination number
+    coordination_mode: str = "all_types" # "all_types", "same_type", "different_type" 
+    coordination_range: List[int] = field(default_factory=lambda: [1, 4]) # Minimum and maximum coordination numbers to consider
 
-    with_coordination_number: bool = False
-    coordinated_with: str = "node1"
-        
+    with_alternating: bool = False # Whether to calculate the alternating clusters ie A4-B5, B2-A3
+
     def __str__(self) -> str:
         lines = []
         for key, value in self.__dict__.items():
             if value is not None:
+                if not self.with_coordination_number and key == "with_coordination_number":
+                    continue
+                elif not self.with_coordination_number and key == "coordination_mode":
+                    continue
+                elif not self.with_coordination_number and key == "coordination_range":
+                    continue
+                elif not self.with_alternating and key == "with_alternating":
+                    continue
 
-                lines.append(f"\t\t|- {value}")
+                lines.append(f"\t\t|- {key}: {value}")
         output = '''
         Clustering Settings:
         -----------------
@@ -46,12 +55,76 @@ class AnalysisSettings:
     
     Attributes:
     """
+    with_all: bool = False # Whether to calculate all the properties
+    with_average_cluster_size: bool = False # Whether to calculate the average cluster size
+    with_largest_cluster_size: bool = False # Whether to calculate the largest cluster size
+    with_spanning_cluster_size: bool = False # Whether to calculate the spanning cluster size
+    with_gyration_radius: bool = False # Whether to calculate the gyration radius
+    with_correlation_length: bool = False # Whether to calculate the correlation length
+    with_percolation_probability: bool = False # Whether to calculate the percolation probability
+    with_order_parameter: bool = False # Whether to calculate the order parameter
+    with_cluster_size_distribution: bool = False # Whether to calculate the cluster size distribution
+    with_printed_unwrapped_clusters: bool = False # Whether to print the unwrapped clusters
+    _disable_warnings: bool = False # Whether to disable warnings
+
+    @property
+    def with_printed_unwrapped_clusters(self) -> bool:
+        return self._with_printed_unwrapped_clusters
+    @with_printed_unwrapped_clusters.setter
+    def with_printed_unwrapped_clusters(self, value: bool) -> None:
+        if value and not self._disable_warnings:
+            print("WARNING: print unwrapped clusters may be disk space consuming.")
+        self._with_printed_unwrapped_clusters = value
+
+    def get_analyzers(self) -> List[str]:
+        analyzers = []
+        if self.with_average_cluster_size:
+            analyzers.append("AverageClusterSizeAnalyzer")
+        if self.with_largest_cluster_size:
+            analyzers.append("LargestClusterSizeAnalyzer")
+        if self.with_spanning_cluster_size:
+            analyzers.append("SpanningClusterSizeAnalyzer")
+        if self.with_gyration_radius:
+            analyzers.append("GyrationRadiusAnalyzer")
+        if self.with_correlation_length:
+            analyzers.append("CorrelationLengthAnalyzer")
+        if self.with_percolation_probability:
+            analyzers.append("PercolationProbabilityAnalyzer")
+        if self.with_order_parameter:
+            analyzers.append("OrderParameterAnalyzer")
+        if self.with_cluster_size_distribution:
+            analyzers.append("ClusterSizeDistributionAnalyzer")
+        if self.with_printed_unwrapped_clusters:
+            analyzers.append("PrintedUnwrappedClustersAnalyzer")
+        return analyzers
 
     def __str__(self) -> str:
         lines = []
         for key, value in self.__dict__.items():
             if value is not None:
-                lines.append(f"\t\t|- {value}")
+                if not self.with_all and key == "with_all":
+                    continue
+                elif not self.with_average_cluster_size and key == "with_average_cluster_size":
+                    continue
+                elif not self.with_largest_cluster_size and key == "with_largest_cluster_size":
+                    continue
+                elif not self.with_spanning_cluster_size and key == "with_spanning_cluster_size":
+                    continue
+                elif not self.with_gyration_radius and key == "with_gyration_radius":
+                    continue
+                elif not self.with_correlation_length and key == "with_correlation_length":
+                    continue
+                elif not self.with_percolation_probability and key == "with_percolation_probability":
+                    continue
+                elif not self.with_order_parameter and key == "with_order_parameter":
+                    continue
+                elif not self.with_cluster_size_distribution and key == "with_cluster_size_distribution":
+                    continue
+                elif key == "_with_printed_unwrapped_clusters":
+                    continue
+                elif key == "_disable_warnings":
+                    continue
+                lines.append(f"\t\t|- {key}: {value}")
         output = '''
         Analysis Settings:
         -----------------
@@ -73,13 +146,14 @@ class LatticeSettings:
         get_lattice_from_file (bool): Whether to get the lattice from a file.
         lattice_file_location (str): Location of the lattice file.
         apply_lattice_to_all_frames (bool): Whether to apply the lattice to all frames.
+        apply_pbc (bool): Whether to apply periodic boundary conditions.
     """
     apply_custom_lattice: bool = False
     custom_lattice: np.ndarray = field(default_factory=lambda: np.array([[0., 0., 0.], [0., 0., 0.], [0., 0., 0.]]))
     get_lattice_from_file: bool = False
     lattice_file_location: str = "./"
     apply_lattice_to_all_frames: bool = True
-    apply_periodic_boundary_conditions: bool = True
+    apply_pbc: bool = True
 
     def __str__(self) -> str:
         if not self.apply_custom_lattice:
@@ -113,7 +187,8 @@ class Settings:
     range_of_frames: Tuple[int, int] = (0, -1)
     verbose: bool = False
     lattice: LatticeSettings = field(default_factory=LatticeSettings) # TODO: implement lattice fetcher from file
-    # analysis: AnalysisSettings = field(default_factory=AnalysisSettings) # TODO: implement analyzer first
+    clustering: ClusteringSettings = field(default_factory=ClusteringSettings)
+    analysis: AnalysisSettings = field(default_factory=AnalysisSettings) # TODO: implement analyzer first
 
     @property
     def output_directory(self) -> str:
@@ -138,6 +213,8 @@ class Settings:
                     lines.append(f"\t{str(self.lattice)}")
                 elif key == 'analysis':
                     lines.append(f"\t{str(self.analysis)}")
+                elif key == 'clustering':
+                    lines.append(f"\t{str(self.clustering)}")
                 else:
                     lines.append(f"\t|- {key}: {value}")
         output = '''
@@ -183,11 +260,17 @@ class SettingsBuilder:
         self._settings.analysis = analysis
         return self
 
+    def with_clustering(self, clustering: ClusteringSettings):
+        self._settings.clustering = clustering
+        return self
+
     def build(self) -> Settings:
         return self._settings
 
 __all__ = [
     Settings,
     SettingsBuilder,
-    AnalysisSettings
+    AnalysisSettings,
+    ClusteringSettings,
+    LatticeSettings,
 ]
