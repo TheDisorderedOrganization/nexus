@@ -3,6 +3,7 @@ from .base_analyzer import BaseAnalyzer
 from .analyzer_factory import AnalyzerFactory
 from .average_cluster_size_analyzer import AverageClusterSizeAnalyzer
 from .largest_cluster_size_analyzer import LargestClusterSizeAnalyzer
+from .spanning_cluster_size_analyzer import SpanningClusterSizeAnalyzer
 from .percolation_probability_analyzer import PercolationProbabilityAnalyzer
 from .order_parameter_analyzer import OrderParameterAnalyzer
 from .cluster_size_distribution_analyzer import ClusterSizeDistributionAnalyzer
@@ -15,6 +16,7 @@ __all__ = [
     "AnalyzerFactory",
     "AverageClusterSizeAnalyzer",
     "LargestClusterSizeAnalyzer",
+    "SpanningClusterSizeAnalyzer",
     "PercolationProbabilityAnalyzer",
     "OrderParameterAnalyzer",
     "ClusterSizeDistributionAnalyzer",

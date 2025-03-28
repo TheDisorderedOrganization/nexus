@@ -1,6 +1,5 @@
 import numpy as np
 from typing import List, Optional, Generator
-from tqdm import tqdm
 
 from ..io.reader.base_reader import BaseReader
 from .frame import Frame

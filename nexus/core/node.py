@@ -20,12 +20,14 @@ class Node:
         Parent of the node (Optional)
     neighbors : List['Node']
         List of neighbors of the node (Optional)
-    velocity : np.ndarray
-        Velocity of the node (Optional)
+    distances : Optional[List[float]]
+        Distances of the neighbors of the node (Optional)
+    indices : Optional[List[int]]
+        Indices of the neighbors of the node (Optional)
     mass : float
         Mass of the node (Optional)
-    correlation_length : float
-        Correlation length of the node (Optional)
+    coordination : Optional[int]
+        Coordination number of the node (Optional)
     other : Optional[List[str]]
         Other attributes of the node (Optional)
     """
@@ -36,9 +38,8 @@ class Node:
     neighbors: List['Node'] = field(default_factory=list, compare=False, repr=False)
     distances: Optional[List[float]] = field(default=None, compare=False, repr=False)
     indices: Optional[List[int]] = field(default=None, compare=False, repr=False)
-    velocity: Optional[np.ndarray] = field(default=None, compare=False, repr=False)
     mass: Optional[float] = field(default=None, compare=True, repr=True)
-    correlation_length: Optional[float] = field(default=None, compare=True, repr=True)
+    coordination: Optional[int] = field(default=None, compare=True, repr=True)
     other: Optional[List[str]] = field(default=None, compare=False, repr=False)
 
     _next_id = 0
@@ -49,15 +50,15 @@ class Node:
         if self.position is None:
             object.__setattr__(self, 'position', np.zeros(3))
         
-        if self.velocity is None:
-            object.__setattr__(self, 'velocity', np.zeros(3))
-
         if self.node_id is None:
             object.__setattr__(self, 'node_id', Node._next_id)
             Node._next_id += 1
         
         if self.mass is None:
-            object.__setattr__(self, 'mass', 0.0)            
+            object.__setattr__(self, 'mass', 0.0)      
+
+        if self.coordination is None:
+            object.__setattr__(self, 'coordination', 0)      
 
         if self.other is None:
             object.__setattr__(self, 'other', [])
@@ -73,12 +74,15 @@ class Node:
         """ Wrap position in a periodic box defined by the lattice """
         return wrap_position(position, lattice)
 
-    def add_neighbour(self, node: 'Node') -> None:
+    def add_neighbor(self, node: 'Node') -> None:
         """ Add a node as a neighbor """
         self.neighbors.append(node)
 
+    def set_coordination(self, coordination: int) -> None:
+        self.coordination = coordination
+
     def __str__(self) -> str:
-        return f"Node {self.node_id} ({self.symbol})"
+        return f"Node {self.node_id} ({self.symbol}) | coordination: {self.coordination} | neighbors: {len(self.neighbors)}"
 
     def __repr__(self) -> str:
         return self.__str__()

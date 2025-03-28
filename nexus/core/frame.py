@@ -97,6 +97,10 @@ class Frame:
         """ Get the clusters of the frame """
         return self.clusters
 
+    def get_nodes(self) -> List[Node]:
+        """ Get the nodes of the frame """
+        return self.nodes
+
     def add_cluster(self, cluster: Cluster) -> None:
         """ Add a cluster to the frame """
         if self.clusters is None:

@@ -1,11 +1,12 @@
-# from typing import List
+from typing import List
 from scipy.spatial import cKDTree
 import numpy as np
 import os
 from tqdm import tqdm
 
-
 # Internal imports
+from ..core.node import Node
+from ..core.cluster import Cluster
 from ..core.frame import Frame
 from ..config.settings import Settings
 
@@ -32,27 +33,27 @@ class ClusterFinder:
 
         # Get the maximum value of the cutoffs of the system
         max_cutoff = 0.0
-        for k, v in cutoffs.items():
-            if v > max_cutoff:
-                max_cutoff = v
+        for cutoff in cutoffs:
+            if cutoff.distance > max_cutoff:
+                max_cutoff = cutoff.distance
 
         # Calculate the graph 
-        if self._settings.lattice.apply_pbc:
+        if self._settings.apply_pbc:
             kdtree = cKDTree(positions, boxsize=lattice)
         else:
             kdtree = cKDTree(positions)
 
         progress_bar_kwargs = {
             "disable": not self._settings.verbose,
-            "leave": True,
+            "leave": False,
             "ncols": os.get_terminal_size().columns,
             "colour": "green"
         }
-        progress_bar = tqdm(range(len(positions)), desc="Fetching nearest neighbours ...", **progress_bar_kwargs)
+        progress_bar = tqdm(range(len(positions)), desc="Fetching nearest neighbors ...", **progress_bar_kwargs)
 
         # Loop over the node positions
         for i in progress_bar:
-            # Query the neighbouring nodes within the cutoff distance
+            # Query the neighboring nodes within the cutoff distance
             index = kdtree.query_ball_point(positions[i], max_cutoff)
 
             # Calculate the distance with k nearest neighbors
@@ -74,11 +75,55 @@ class ClusterFinder:
 
             # Add the nearest neighbors to the node
             for j in indices:
-                self._nodes[i].add_neighbour(self._nodes[j])
+                self._nodes[i].add_neighbor(self._nodes[j])
             
             # Filter the neighbors
-            # self._nodes[i].filter_neighbours(distances) # TODO: find an implementation
+            self.filter_neighbors(idx=i, distances=distances) # TODO: find an implementation
 
             # Calculate the coordination number
-            # self._nodes[i].calculate_coordination() # TODO: find an implementation
+            self.calculate_coordination(idx=i) # TODO: find an implementation
             
+
+    def filter_neighbors(self, idx: int, distances: List[float]) -> None:
+        new_list_neighbors = []
+        new_list_distances  = []
+        
+        node = self._nodes[idx]
+
+        for k, neighbor in enumerate(node.neighbors):
+            rcut = self._settings.clustering.get_cutoff(node.symbol, neighbor.symbol)
+            
+            if isinstance(distances, float):
+                # if 'distances' is a float, it means that the neighbor of this atom is itself.
+                current_distance = distances
+            else:
+                current_distance = distances[k]
+            
+            if current_distance > rcut: # neighbor is too far 
+                continue # go next neighbor
+            elif current_distance == 0: # neighbor is this atom.
+                continue # go next neighbor
+            else:
+                new_list_neighbors.append(neighbor) # keep the neighbor
+                new_list_distances.append(current_distance)
+
+        node.neighbors = new_list_neighbors
+        node.distances = new_list_distances
+
+    def calculate_coordination(self, idx: int) -> None:
+        node = self._nodes[idx]
+        
+        mode = self._settings.clustering.coordination_mode
+
+        # "all_types", "same_type", "different_type", "<node_type>"
+        if mode == 'all_types':
+            node.set_coordination(len(node.neighbors))
+        elif mode == 'same_type':
+            node.set_coordination(len([n for n in node.neighbors if n.symbol == node.symbol]))
+        elif mode == 'different_type':
+            node.set_coordination(len([n for n in node.neighbors if n.symbol != node.symbol]))
+        else:
+            node.set_coordination(len([n for n in node.neighbors if n.symbol == mode]))
+        
+            
+        

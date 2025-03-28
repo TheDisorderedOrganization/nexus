@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Generator, List, Optional
+from typing import List
 
 from ..core.frame import Frame
 
@@ -10,6 +10,10 @@ class BaseAnalyzer(ABC):
 
     @abstractmethod
     def analyze(self) -> None:
+        pass
+
+    @abstractmethod
+    def update_frame_processed(self, frame: Frame) -> None:
         pass
 
     def __str__(self) -> str:

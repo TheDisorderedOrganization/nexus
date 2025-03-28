@@ -9,20 +9,23 @@ config_lattice = c.LatticeSettings(
     custom_lattice=np.array([[66.2574, 0.0, 0.0],     # Put a custom lattice here or None
                              [0.0, 66.2574, 0.0],     # lattice values MUST be float.
                              [0.0, 0.0, 66.2574]]), 
-    apply_lattice_to_all_frames=True,               # Apply the same lattice to all frames
+    apply_lattice_to_all_frames=False,               # Apply the same lattice to all frames
     get_lattice_from_file=False,                    # Get lattice from file (will read from lattice.dat if True)
     lattice_file_location="./",                     # Location of the lattice file
 )
 
 # Clustering settings
 config_clustering = c.ClusteringSettings(
-    criteria="bond",
+    criteria="distance",
     node_types=["Si", "O"],
     connectivity=["Si", "O", "Si"],
-    cutoffs={"SiSi": 3.50, "SiO": 2.30, "OO": 3.05},
+    cutoffs=[c.Cutoff(type1="Si", type2="Si", distance=3.50),
+             c.Cutoff(type1="Si", type2="O", distance=2.30),
+             c.Cutoff(type1="O", type2="O", distance=3.05)],
     with_coordination_number=True,
-    coordination_mode="different_types",
+    coordination_mode="O", # "all_types" or "same_type" or "different_type" or "<node_type>"
     coordination_range=[4, 6],
+    with_alternating=True, # if with_coordination_number is True, calculate alternating coordination number ie 4-5, 5-6 ...
 )
 
 # Analysis settings
@@ -40,15 +43,14 @@ settings = (SettingsBuilder() \
     .with_export_directory('export')    # Directory to export results \
     .with_file_location(path)           # Path to the trajectory file \
     .with_number_of_nodes(27216)        # Number of nodes in the trajectory \
-    .with_range_of_frames(0, -1)        # Range of frames to process (0 to -1 = all frames) \
+    .with_range_of_frames(0, 0)        # Range of frames to process (0 to -1 = all frames) \
+    .with_apply_pbc(False)              # Whether to apply periodic boundary conditions (True = apply) \
     .with_verbose(True)                 # Whether to print settings, progress bars and other information (True = print) \
     .with_lattice(config_lattice)       # Lattice settings \
     .with_clustering(config_clustering) # Clustering settings \
     .with_analysis(config_analysis)     # Analysis settings \
     .build()                            # Don't forget to build the settings object
 )
-
-print(settings.clustering.with_coordination_number)
 
 # Run the main function to process the trajectory
 main(settings) 

@@ -5,6 +5,24 @@ from typing import Tuple, Optional, List, Dict
 
 
 @dataclass
+class Cutoff:
+    """
+    Cutoff that contains all the cutoffs.
+    
+    Attributes:
+    """
+    type1: str
+    type2: str
+    distance: float
+
+    def __str__(self) -> str:
+        return f"{self.type1}-{self.type2} : distance={self.distance}"
+
+    def get_distance(self) -> float:
+        return self.distance
+
+
+@dataclass
 class ClusteringSettings:
     """
     Clustering settings that contains all the clustering settings. 
@@ -13,8 +31,9 @@ class ClusteringSettings:
     """
     criteria: str = "distance" # "distance" or "bond"
     node_types: List[str] = field(default_factory=lambda: ["A", "B"]) # List of node types
+    node_masses: List[float] = field(default_factory=lambda: [1.0, 1.0]) # List of node masses in reduced units
     connectivity: List[str] = field(default_factory=lambda: ["A", "B", "A"]) # List of connectivity
-    cutoffs: Dict[str, float] = field(default_factory=lambda: {"AA": 1.0, "AB": 1.0, "BB": 1.0}) # Cutoffs for distance and bond criteria
+    cutoffs: List[Cutoff] = field(default_factory=lambda: [Cutoff(type1="A", type2="B", distance=1.0)]) # Cutoffs for distance and bond criteria
 
     # Coordination number ie number of nearest neighbors
     # - all_types: all types of nodes are considered A-AB, B-AB
@@ -22,10 +41,20 @@ class ClusteringSettings:
     # - different_type: only nodes of the different types are considered A-B, B-A
     
     with_coordination_number: bool = False # Whether to calculate the coordination number
-    coordination_mode: str = "all_types" # "all_types", "same_type", "different_type" 
+
+    coordination_mode: str = "all_types" # "all_types", "same_type", "different_type", "<node_type>"
+    
     coordination_range: List[int] = field(default_factory=lambda: [1, 4]) # Minimum and maximum coordination numbers to consider
 
     with_alternating: bool = False # Whether to calculate the alternating clusters ie A4-B5, B2-A3
+
+    def get_cutoff(self, type1: str, type2: str) -> float:
+        for cutoff in self.cutoffs:
+            if cutoff.type1 == type1 and cutoff.type2 == type2:
+                return cutoff.distance
+            elif cutoff.type1 == type2 and cutoff.type2 == type1:
+                return cutoff.distance
+        return None
 
     def __str__(self) -> str:
         lines = []
@@ -67,15 +96,6 @@ class AnalysisSettings:
     with_printed_unwrapped_clusters: bool = False # Whether to print the unwrapped clusters
     _disable_warnings: bool = False # Whether to disable warnings
 
-    @property
-    def with_printed_unwrapped_clusters(self) -> bool:
-        return self._with_printed_unwrapped_clusters
-    @with_printed_unwrapped_clusters.setter
-    def with_printed_unwrapped_clusters(self, value: bool) -> None:
-        if value and not self._disable_warnings:
-            print("WARNING: print unwrapped clusters may be disk space consuming.")
-        self._with_printed_unwrapped_clusters = value
-
     def get_analyzers(self) -> List[str]:
         analyzers = []
         if self.with_average_cluster_size:
@@ -94,8 +114,15 @@ class AnalysisSettings:
             analyzers.append("OrderParameterAnalyzer")
         if self.with_cluster_size_distribution:
             analyzers.append("ClusterSizeDistributionAnalyzer")
-        if self.with_printed_unwrapped_clusters:
-            analyzers.append("PrintedUnwrappedClustersAnalyzer")
+        if self.with_all:
+            analyzers.append("AverageClusterSizeAnalyzer")
+            analyzers.append("LargestClusterSizeAnalyzer")
+            analyzers.append("SpanningClusterSizeAnalyzer")
+            analyzers.append("GyrationRadiusAnalyzer")
+            analyzers.append("CorrelationLengthAnalyzer")
+            analyzers.append("PercolationProbabilityAnalyzer")
+            analyzers.append("OrderParameterAnalyzer")
+            analyzers.append("ClusterSizeDistributionAnalyzer")
         return analyzers
 
     def __str__(self) -> str:
@@ -153,7 +180,6 @@ class LatticeSettings:
     get_lattice_from_file: bool = False
     lattice_file_location: str = "./"
     apply_lattice_to_all_frames: bool = True
-    apply_pbc: bool = True
 
     def __str__(self) -> str:
         if not self.apply_custom_lattice:
@@ -185,10 +211,11 @@ class Settings:
     file_location: str = "./"
     number_of_nodes: int = 0
     range_of_frames: Tuple[int, int] = (0, -1)
+    apply_pbc: bool = True
     verbose: bool = False
-    lattice: LatticeSettings = field(default_factory=LatticeSettings) # TODO: implement lattice fetcher from file
+    lattice: LatticeSettings = field(default_factory=LatticeSettings)
     clustering: ClusteringSettings = field(default_factory=ClusteringSettings)
-    analysis: AnalysisSettings = field(default_factory=AnalysisSettings) # TODO: implement analyzer first
+    analysis: AnalysisSettings = field(default_factory=AnalysisSettings)
 
     @property
     def output_directory(self) -> str:
@@ -247,6 +274,10 @@ class SettingsBuilder:
     def with_range_of_frames(self, start: int, end: Optional[int] = None):
         self._settings.set_range_of_frames(start, end)
         return self
+    
+    def with_apply_pbc(self, apply_pbc: bool):
+        self._settings.apply_pbc = apply_pbc
+        return self
 
     def with_lattice(self, lattice: LatticeSettings):
         self._settings.lattice = lattice
@@ -257,10 +288,23 @@ class SettingsBuilder:
         return self
 
     def with_analysis(self, analysis: AnalysisSettings):
+        if analysis.with_printed_unwrapped_clusters and not analysis._disable_warnings:
+            print("Warning: with_printed_unwrapped_clusters is enabled. This may be disk usage consuming.")
+
         self._settings.analysis = analysis
         return self
 
     def with_clustering(self, clustering: ClusteringSettings):
+        if clustering.with_coordination_number:
+            modes = ["all_types", "same_type", "different_type"]
+            if clustering.coordination_mode not in modes and clustering.coordination_mode not in clustering.node_types:
+                raise ValueError(f"Invalid coordination mode: {clustering.coordination_mode}")
+            if len(clustering.coordination_range) != 2:
+                raise ValueError(f"Invalid coordination range: {clustering.coordination_range}")
+            if clustering.coordination_range[0] < 1:
+                raise ValueError(f"Invalid coordination range: {clustering.coordination_range}")
+        
+
         self._settings.clustering = clustering
         return self
 
@@ -273,4 +317,5 @@ __all__ = [
     AnalysisSettings,
     ClusteringSettings,
     LatticeSettings,
+    Cutoff,
 ]

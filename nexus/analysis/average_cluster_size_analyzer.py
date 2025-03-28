@@ -11,6 +11,9 @@ class AverageClusterSizeAnalyzer(BaseAnalyzer):
     def analyze(self) -> None:
         pass
 
+    def update_frame_processed(self, frame: Frame) -> None:
+        self.frame_processed.append(frame)
+
     def __str__(self) -> str:
         return f"{self.__class__.__name__}"
 

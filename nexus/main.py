@@ -26,22 +26,13 @@ def main(settings: Settings):
     else:
         total = settings.range_of_frames[1] - settings.range_of_frames[0]
 
-    progress_bar_kwargs = {
-        "disable": not settings.verbose,
-        "leave": True,
-        "ncols": os.get_terminal_size().columns,
-        "colour": "green"
-    }
-
     # Initialize analyzers
     analyzers = []
+    frame_processed = []
     for analyzer in settings.analysis.get_analyzers():
-        analyzers.append(AnalyzerFactory(frame_processed=[], verbose=settings.verbose).get_analyzer(analyzer))
+        analyzers.append(AnalyzerFactory(frame_processed, verbose=settings.verbose).get_analyzer(analyzer))
 
-    print(analyzers)
-
-    progress_bar = tqdm(enumerate(system.iter_frames()), total=total, desc="Parsing frames", unit="frame", **progress_bar_kwargs)
-    for i, frame in progress_bar:
+    for i, frame in enumerate(system.iter_frames()):
         if settings.lattice.apply_custom_lattice:
             frame.set_lattice(settings.lattice.custom_lattice)
         
@@ -49,5 +40,15 @@ def main(settings: Settings):
         cluster_finder = ClusterFinder(frame, settings)
         cluster_finder.find_neighbors()
 
+        nodes = frame.get_nodes()
+        print(nodes[20000]) 
 
+        # for analyzer in analyzers:
+        #     analyzer.analyze(frame)
+
+        # frame_processed.append(frame)
+        # for analyzer in analyzers:
+        #     analyzer.update_frame_processed(frame)
+        
+        
     

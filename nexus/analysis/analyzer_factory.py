@@ -3,6 +3,7 @@ from ..core.frame import Frame
 from .base_analyzer import BaseAnalyzer
 from .average_cluster_size_analyzer import AverageClusterSizeAnalyzer
 from .largest_cluster_size_analyzer import LargestClusterSizeAnalyzer
+from .spanning_cluster_size_analyzer import SpanningClusterSizeAnalyzer
 from .percolation_probability_analyzer import PercolationProbabilityAnalyzer
 from .order_parameter_analyzer import OrderParameterAnalyzer
 from .cluster_size_distribution_analyzer import ClusterSizeDistributionAnalyzer
@@ -15,6 +16,7 @@ class AnalyzerFactory:
         # Register other analyzers here
         self.register_analyzer(AverageClusterSizeAnalyzer(frame_processed, verbose))
         self.register_analyzer(LargestClusterSizeAnalyzer(frame_processed, verbose))
+        self.register_analyzer(SpanningClusterSizeAnalyzer(frame_processed, verbose))
         self.register_analyzer(PercolationProbabilityAnalyzer(frame_processed, verbose))
         self.register_analyzer(OrderParameterAnalyzer(frame_processed, verbose))
         self.register_analyzer(ClusterSizeDistributionAnalyzer(frame_processed, verbose))
