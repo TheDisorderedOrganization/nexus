@@ -94,14 +94,14 @@ class ClusterFinder:
             rcut = self._settings.clustering.get_cutoff(node.symbol, neighbor.symbol)
             
             if isinstance(distances, float):
-                # if 'distances' is a float, it means that the neighbor of this atom is itself.
+                # if 'distances' is a float, it means that the neighbor of this node is itself.
                 current_distance = distances
             else:
                 current_distance = distances[k]
             
             if current_distance > rcut: # neighbor is too far 
                 continue # go next neighbor
-            elif current_distance == 0: # neighbor is this atom.
+            elif current_distance == 0: # neighbor is this node.
                 continue # go next neighbor
             else:
                 new_list_neighbors.append(neighbor) # keep the neighbor
@@ -124,6 +124,35 @@ class ClusterFinder:
             node.set_coordination(len([n for n in node.neighbors if n.symbol != node.symbol]))
         else:
             node.set_coordination(len([n for n in node.neighbors if n.symbol == mode]))
+
+    def find(self, node: Node) -> Node:
+        if node.parent != node:
+            node.parent = self.find(node.parent)
+        return node.parent
+
+    def union(self, node_1: Node, node_2: Node) -> None:
+        root_1 = self.find(node_1)
+        root_2 = self.find(node_2)
         
+        if root_1 != root_2:
+            root_2.parent = root_1
+
+    def find_clusters(self) -> None:
+        # Select the networking nodes based on clustering settings
+        # 1 - check node types
+        networking_nodes = [node for node in self._nodes if node.symbol in self._settings.clustering.node_types]
+
+        # 2 - create rules for clustering
+        # rules are a list of strings that will be used to filter the nodes using their class attributes.
+        rules = []
+
+        # 3 - check coordination
+        if self._settings.clustering.with_coordination_number:
+            networking_nodes = [node for node in networking_nodes if node.coordination >= self._settings.clustering.coordination_range[0] and node.coordination <= self._settings.clustering.coordination_range[1]]
+            rules.append()
+
+            if self._settings.clustering.with_alternating:
+                rules
+
             
         

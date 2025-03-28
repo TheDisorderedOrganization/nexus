@@ -18,8 +18,8 @@ config_lattice = c.LatticeSettings(
 config_clustering = c.ClusteringSettings(
     criteria="distance",
     node_types=["Si", "O"],
-    connectivity=["Si", "O", "Si"],
-    cutoffs=[c.Cutoff(type1="Si", type2="Si", distance=3.50),
+    connectivity=["Si", "Si"],
+    cutoffs=[c.Cutoff(type1="Si", type2="Si", distance=3.50), # cutoff distance in reduced units
              c.Cutoff(type1="Si", type2="O", distance=2.30),
              c.Cutoff(type1="O", type2="O", distance=3.05)],
     with_coordination_number=True,

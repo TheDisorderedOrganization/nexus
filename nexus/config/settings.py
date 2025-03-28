@@ -3,6 +3,8 @@ from dataclasses import dataclass, field
 import numpy as np
 from typing import Tuple, Optional, List, Dict
 
+from nexus.core import cluster
+
 
 @dataclass
 class Cutoff:
@@ -295,6 +297,18 @@ class SettingsBuilder:
         return self
 
     def with_clustering(self, clustering: ClusteringSettings):
+        if clustering.criteria not in ['bond', 'distance']:
+            raise ValueError(f"Invalid criteria: {clustering.criteria}")
+
+        if clustering.connectivity is None:
+            raise ValueError(f"Invalid connectivity: {clustering.connectivity}")
+
+        if clustering.criteria == 'bond' and len(clustering.connectivity) != 3:
+            raise ValueError(f"Invalid connectivity, connectivity must be a list of 3 elements, got {len(clustering.connectivity)}")
+
+        if clustering.criteria == 'distance' and len(clustering.connectivity) != 2:
+            raise ValueError(f"Invalid connectivity, connectivity must be a list of 2 elements, got {len(clustering.connectivity)}")
+
         if clustering.with_coordination_number:
             modes = ["all_types", "same_type", "different_type"]
             if clustering.coordination_mode not in modes and clustering.coordination_mode not in clustering.node_types:
@@ -303,8 +317,9 @@ class SettingsBuilder:
                 raise ValueError(f"Invalid coordination range: {clustering.coordination_range}")
             if clustering.coordination_range[0] < 1:
                 raise ValueError(f"Invalid coordination range: {clustering.coordination_range}")
-        
-
+            if clustering.coordination_range[0] > clustering.coordination_range[1]:
+                raise ValueError(f"Invalid coordination range: {clustering.coordination_range}")
+            
         self._settings.clustering = clustering
         return self
 
