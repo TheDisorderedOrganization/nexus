@@ -1,10 +1,9 @@
 from typing import List
-from ..core.frame import Frame
-from ..core.cluster import Cluster
+from ...core.frame import Frame
 from .base_analyzer import BaseAnalyzer
 
 
-class AverageClusterSizeAnalyzer(BaseAnalyzer):
+class CorrelationLengthAnalyzer(BaseAnalyzer):
     def __init__(self, frame_processed: List[Frame], verbose: bool = True) -> None:
         super().__init__(frame_processed, verbose)
 

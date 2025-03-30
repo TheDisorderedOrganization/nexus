@@ -41,7 +41,7 @@ def main(settings: Settings):
         cluster_finder.find_neighbors()
 
         nodes = frame.get_nodes()
-        print(nodes[20000]) 
+        print(nodes[1]) 
 
         # for analyzer in analyzers:
         #     analyzer.analyze(frame)

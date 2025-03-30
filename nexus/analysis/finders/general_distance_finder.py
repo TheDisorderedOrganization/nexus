@@ -5,13 +5,13 @@ import os
 from tqdm import tqdm
 
 # Internal imports
-from ..core.node import Node
-from ..core.cluster import Cluster
-from ..core.frame import Frame
-from ..config.settings import Settings
+from ...core.node import Node
+from ...core.frame import Frame
+from ...config.settings import Settings
+from .base_finder import BaseFinder
 
 
-class ClusterFinder:
+class GeneralFinder(BaseFinder):
     def __init__(self, frame: Frame, settings: Settings) -> None:
         self.frame = frame
         self._lattice = self.frame.lattice
@@ -80,9 +80,6 @@ class ClusterFinder:
             # Filter the neighbors
             self.filter_neighbors(idx=i, distances=distances) # TODO: find an implementation
 
-            # Calculate the coordination number
-            self.calculate_coordination(idx=i) # TODO: find an implementation
-            
 
     def filter_neighbors(self, idx: int, distances: List[float]) -> None:
         new_list_neighbors = []
@@ -109,50 +106,13 @@ class ClusterFinder:
 
         node.neighbors = new_list_neighbors
         node.distances = new_list_distances
-
-    def calculate_coordination(self, idx: int) -> None:
-        node = self._nodes[idx]
         
-        mode = self._settings.clustering.coordination_mode
-
-        # "all_types", "same_type", "different_type", "<node_type>"
-        if mode == 'all_types':
-            node.set_coordination(len(node.neighbors))
-        elif mode == 'same_type':
-            node.set_coordination(len([n for n in node.neighbors if n.symbol == node.symbol]))
-        elif mode == 'different_type':
-            node.set_coordination(len([n for n in node.neighbors if n.symbol != node.symbol]))
-        else:
-            node.set_coordination(len([n for n in node.neighbors if n.symbol == mode]))
-
-    def find(self, node: Node) -> Node:
-        if node.parent != node:
-            node.parent = self.find(node.parent)
-        return node.parent
-
-    def union(self, node_1: Node, node_2: Node) -> None:
-        root_1 = self.find(node_1)
-        root_2 = self.find(node_2)
-        
-        if root_1 != root_2:
-            root_2.parent = root_1
-
     def find_clusters(self) -> None:
         # Select the networking nodes based on clustering settings
         # 1 - check node types
         networking_nodes = [node for node in self._nodes if node.symbol in self._settings.clustering.node_types]
 
-        # 2 - create rules for clustering
-        # rules are a list of strings that will be used to filter the nodes using their class attributes.
-        rules = []
-
-        # 3 - check coordination
-        if self._settings.clustering.with_coordination_number:
-            networking_nodes = [node for node in networking_nodes if node.coordination >= self._settings.clustering.coordination_range[0] and node.coordination <= self._settings.clustering.coordination_range[1]]
-            rules.append()
-
-            if self._settings.clustering.with_alternating:
-                rules
+        
 
             
         

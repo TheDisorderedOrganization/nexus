@@ -1,9 +1,9 @@
 from typing import List
+from ...core.frame import Frame
 from .base_analyzer import BaseAnalyzer
-from ..core.frame import Frame
 
 
-class LargestClusterSizeAnalyzer(BaseAnalyzer):
+class OrderParameterAnalyzer(BaseAnalyzer):
     def __init__(self, frame_processed: List[Frame], verbose: bool = True) -> None:
         super().__init__(frame_processed, verbose)
 

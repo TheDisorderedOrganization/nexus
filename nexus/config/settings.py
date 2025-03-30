@@ -42,12 +42,12 @@ class ClusteringSettings:
     # - same_type: only nodes of the same type are considered A-A, B-B
     # - different_type: only nodes of the different types are considered A-B, B-A
     
+    # Calls clustering algorithm with coordination number
     with_coordination_number: bool = False # Whether to calculate the coordination number
-
     coordination_mode: str = "all_types" # "all_types", "same_type", "different_type", "<node_type>"
-    
     coordination_range: List[int] = field(default_factory=lambda: [1, 4]) # Minimum and maximum coordination numbers to consider
 
+    # Calls clustering algorithm with alternating clusters (with coordination number)
     with_alternating: bool = False # Whether to calculate the alternating clusters ie A4-B5, B2-A3
 
     def get_cutoff(self, type1: str, type2: str) -> float:
@@ -319,6 +319,13 @@ class SettingsBuilder:
                 raise ValueError(f"Invalid coordination range: {clustering.coordination_range}")
             if clustering.coordination_range[0] > clustering.coordination_range[1]:
                 raise ValueError(f"Invalid coordination range: {clustering.coordination_range}")
+            if clustering.coordination_mode is None:
+                raise ValueError(f"Invalid coordination mode: {clustering.coordination_mode} with with_coordination_number set to True")
+            if clustering.coordination_range is None:
+                raise ValueError(f"Invalid coordination range: {clustering.coordination_range} with with_coordination_number set to True")
+            
+        if clustering.with_alternating and not clustering.with_coordination_number:
+            raise ValueError(f"Activate with_coordination_number before with_alternating")
             
         self._settings.clustering = clustering
         return self
