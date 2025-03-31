@@ -12,13 +12,15 @@ config_lattice = c.LatticeSettings(
 config_clustering = c.ClusteringSettings(
     criteria="distance",
     node_types=["1"],
+    node_masses=[1.0],
     connectivity=["1", "1"],
-    cutoffs=[c.Cutoff(type1="1", type2="1", distance=1.0)], # cutoff distance in reduced units
+    cutoffs=[c.Cutoff(type1="1", type2="1", distance=1.1)], # cutoff distance in reduced units
 )
 
 # Analysis settings
 config_analysis = c.AnalysisSettings(
-    with_all=True,
+    with_all=False,
+    with_average_cluster_size=True,
 )
 
 # Path to the trajectory file

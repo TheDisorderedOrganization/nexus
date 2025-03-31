@@ -1,14 +1,14 @@
 from typing import Optional, List
 from ..core.frame import Frame
-from .base_analyzer import BaseAnalyzer
-from .average_cluster_size_analyzer import AverageClusterSizeAnalyzer
-from .largest_cluster_size_analyzer import LargestClusterSizeAnalyzer
-from .spanning_cluster_size_analyzer import SpanningClusterSizeAnalyzer
-from .percolation_probability_analyzer import PercolationProbabilityAnalyzer
-from .order_parameter_analyzer import OrderParameterAnalyzer
-from .cluster_size_distribution_analyzer import ClusterSizeDistributionAnalyzer
-from .gyration_radius_analyzer import GyrationRadiusAnalyzer
-from .correlation_length_analyzer import CorrelationLengthAnalyzer
+from .analyzers.base_analyzer import BaseAnalyzer
+from .analyzers.average_cluster_size_analyzer import AverageClusterSizeAnalyzer
+from .analyzers.largest_cluster_size_analyzer import LargestClusterSizeAnalyzer
+from .analyzers.spanning_cluster_size_analyzer import SpanningClusterSizeAnalyzer
+from .analyzers.percolation_probability_analyzer import PercolationProbabilityAnalyzer
+from .analyzers.order_parameter_analyzer import OrderParameterAnalyzer
+from .analyzers.cluster_size_distribution_analyzer import ClusterSizeDistributionAnalyzer
+from .analyzers.gyration_radius_analyzer import GyrationRadiusAnalyzer
+from .analyzers.correlation_length_analyzer import CorrelationLengthAnalyzer
 
 class AnalyzerFactory:
     def __init__(self, frame_processed: List[Frame], verbose: bool = True):

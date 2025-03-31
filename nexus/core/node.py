@@ -78,6 +78,9 @@ class Node:
         """ Add a node as a neighbor """
         self.neighbors.append(node)
 
+    def reset_parent(self) -> None:
+        self.parent = self
+
     def set_coordination(self, coordination: int) -> None:
         self.coordination = coordination
 

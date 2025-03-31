@@ -32,10 +32,10 @@ class ClusteringSettings:
     Attributes:
     """
     criteria: str = "distance" # "distance" or "bond"
-    node_types: List[str] = field(default_factory=lambda: ["A", "B"]) # List of node types
-    node_masses: List[float] = field(default_factory=lambda: [1.0, 1.0]) # List of node masses in reduced units
-    connectivity: List[str] = field(default_factory=lambda: ["A", "B", "A"]) # List of connectivity
-    cutoffs: List[Cutoff] = field(default_factory=lambda: [Cutoff(type1="A", type2="B", distance=1.0)]) # Cutoffs for distance and bond criteria
+    node_types: List[str] = field(default_factory=lambda: []) # List of node types
+    node_masses: List[float] = field(default_factory=lambda: []) # List of node masses in reduced units
+    connectivity: List[str] = field(default_factory=lambda: []) # List of connectivity
+    cutoffs: List[Cutoff] = field(default_factory=lambda: []) # Cutoffs for distance and bond criteria
 
     # Coordination number ie number of nearest neighbors
     # - all_types: all types of nodes are considered A-AB, B-AB
@@ -45,7 +45,7 @@ class ClusteringSettings:
     # Calls clustering algorithm with coordination number
     with_coordination_number: bool = False # Whether to calculate the coordination number
     coordination_mode: str = "all_types" # "all_types", "same_type", "different_type", "<node_type>"
-    coordination_range: List[int] = field(default_factory=lambda: [1, 4]) # Minimum and maximum coordination numbers to consider
+    coordination_range: List[int] = field(default_factory=lambda: []) # Minimum and maximum coordination numbers to consider
 
     # Calls clustering algorithm with alternating clusters (with coordination number)
     with_alternating: bool = False # Whether to calculate the alternating clusters ie A4-B5, B2-A3
@@ -326,6 +326,15 @@ class SettingsBuilder:
             
         if clustering.with_alternating and not clustering.with_coordination_number:
             raise ValueError(f"Activate with_coordination_number before with_alternating")
+
+        if clustering.node_types is None:
+            raise ValueError(f"Invalid node types: {clustering.node_types}")
+
+        if clustering.node_masses is None:
+            raise ValueError(f"Invalid node masses: {clustering.node_masses}")
+
+        if len(clustering.node_types) != len(clustering.node_masses):
+            raise ValueError(f"Invalid node types and masses: {clustering.node_types} and {clustering.node_masses}")
             
         self._settings.clustering = clustering
         return self

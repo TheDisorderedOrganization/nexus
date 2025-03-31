@@ -107,6 +107,10 @@ class Frame:
             self.clusters = []
         self.clusters.append(cluster)
 
+    def set_clusters(self, clusters: List[Cluster]) -> None:
+        """ Set the clusters of the frame """
+        self.clusters = clusters
+
     def __len__(self) -> int:
         """ Get the number of nodes in the frame """
         return len(self.nodes)

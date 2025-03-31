@@ -6,17 +6,20 @@ from tqdm import tqdm
 
 # Internal imports
 from ...core.node import Node
+from ...core.cluster import Cluster
 from ...core.frame import Frame
 from ...config.settings import Settings
 from .base_finder import BaseFinder
 
 
-class GeneralFinder(BaseFinder):
+class GeneralDistanceFinder(BaseFinder):
     def __init__(self, frame: Frame, settings: Settings) -> None:
-        self.frame = frame
-        self._lattice = self.frame.lattice
-        self._nodes = self.frame.nodes
-        self._settings = settings
+        self.frame: Frame = frame
+        self.clusters: List[Cluster] = []
+        self._lattice: np.ndarray = self.frame.lattice
+        self._nodes: List[Node] = self.frame.nodes
+        self._settings: Settings = settings
+        self._counter: int = 0
         
     def find_neighbors(self) -> None:
         
@@ -101,18 +104,82 @@ class GeneralFinder(BaseFinder):
             elif current_distance == 0: # neighbor is this node.
                 continue # go next neighbor
             else:
+                if neighbor.node_id == node.node_id:
+                    continue # go next neighbor
                 new_list_neighbors.append(neighbor) # keep the neighbor
                 new_list_distances.append(current_distance)
 
         node.neighbors = new_list_neighbors
         node.distances = new_list_distances
-        
-    def find_clusters(self) -> None:
-        # Select the networking nodes based on clustering settings
-        # 1 - check node types
-        networking_nodes = [node for node in self._nodes if node.symbol in self._settings.clustering.node_types]
-
+        node.indices = [node.node_id for node in new_list_neighbors]
         
 
+    def get_connectivity(self) -> str:
+        connectivity = self._settings.clustering.connectivity
+        if isinstance(connectivity, list) and len(connectivity) == 2:
+            connectivity = f"{connectivity[0]}-{connectivity[1]}"
+            return connectivity
+        else:
+            raise ValueError("Connectivity must be a list of two elements.")
             
+    
+    def find_clusters(self) -> List[Cluster]:
+        networking_nodes = [node for node in self._nodes if node.symbol in self._settings.clustering.node_types]
+        connectivity = self._settings.clustering.connectivity
+
+        number_of_nodes = 0
         
+        progress_bar_kwargs = {
+            "disable": not self._settings.verbose,
+            "leave": False,
+            "ncols": os.get_terminal_size().columns,
+            "colour": "green"
+        }
+        progress_bar = tqdm(networking_nodes, desc="Finding clusters ...", **progress_bar_kwargs)
+
+        for node in progress_bar:
+            if node.symbol == connectivity[0]:
+                for neighbor in node.neighbors:
+                    if neighbor.symbol == connectivity[1]:
+                        self.union(neighbor, node)
+        
+        clusters_found = {}
+
+        for node in networking_nodes:
+            root = self.find(node)
+            clusters_found.setdefault(root.node_id, []).append(node)
+
+        progress_bar = tqdm(range(len(clusters_found)), desc="Calculating clusters properties ...", **progress_bar_kwargs)  
+
+        for i in progress_bar:
+            cluster = list(clusters_found.values())[i]
+
+            for node in cluster:
+                root = self.find(node)
+                break
+
+            current_cluster = Cluster(
+                connectivity=self.get_connectivity(),
+                root_id=root.node_id,
+                size=len(cluster),
+                settings=self._settings
+            )
+
+            for node in cluster:
+                current_cluster.add_node(node)
+                if len(cluster) > 1:
+                    number_of_nodes += 1
+            
+            self.clusters.append(current_cluster)
+            self._counter += 1
+
+            for node in cluster:
+                node.reset_parent()
+            
+        if number_of_nodes == 0:
+            number_of_nodes = 1 # avoid zero division
+            
+        for cluster in self.clusters:
+            cluster.total_nodes = number_of_nodes
+
+        return self.clusters

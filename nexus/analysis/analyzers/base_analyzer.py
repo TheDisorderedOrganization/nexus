@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Dict
 
-from ...core.frame import Frame  
+from ...core.frame import Frame   
 
 class BaseAnalyzer(ABC):
     def __init__(self, frame_processed: List[Frame], verbose: bool = True) -> None:
@@ -9,11 +9,19 @@ class BaseAnalyzer(ABC):
         self.verbose: bool = verbose
 
     @abstractmethod
-    def analyze(self) -> None:
+    def analyze(self, frame: Frame) -> None:
         pass
 
     @abstractmethod
     def update_frame_processed(self, frame: Frame) -> None:
+        pass
+
+    @abstractmethod
+    def finalize(self) -> None:
+        pass
+
+    @abstractmethod
+    def get_result(self) -> Dict[str, float]:
         pass
 
     def __str__(self) -> str:

@@ -34,3 +34,6 @@ class BaseFinder(ABC):
     def find_clusters(self) -> None:
         pass
 
+    @abstractmethod
+    def get_connectivity(self) -> None:
+        pass

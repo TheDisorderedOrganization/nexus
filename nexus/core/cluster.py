@@ -1,12 +1,13 @@
 from typing import List
+import numpy as np
 
 # Internal imports
 from .node import Node
 from ..config.settings import Settings
 
 class Cluster:
-    def __init__(self, nodes: List[Node], connectivity: str, root_id: int, size: int, settings: Settings) -> None:
-        self.nodes: List[Node] = nodes
+    def __init__(self, connectivity: str, root_id: int, size: int, settings: Settings) -> None:
+        self.nodes: List[Node] = []
         self.connectivity: str = connectivity
         self.root_id: int = root_id
         self.size: int = size
@@ -27,6 +28,12 @@ class Cluster:
 
     def get_nodes(self) -> List[Node]:
         return self.nodes
+
+    def get_connectivity(self) -> str:
+        return self.connectivity
+
+    def get_size(self) -> int:
+        return self.size
 
     def set_indices_and_positions(self, positions_dict) -> None:
         for node_id, position in positions_dict.items():
@@ -184,3 +191,15 @@ class Cluster:
             delta = vector[i] - round(vector[i] / lattice[i, i]) * lattice[i, i]
             unwrapped_position.append(delta)
         return tuple(unwrapped_position)
+
+    def __str__(self) -> str:
+        list_id = [str(i.node_id) for i in self.nodes]
+        if len(list_id) > 20:
+            list_id = list_id[:20] + ['...']
+        list_id = ', '.join(list_id)
+            
+        return f"{self.root_id} {self.connectivity} {self.size} {self.is_percolating} {list_id}"
+
+    def __repr__(self) -> str:
+        return self.__str__()
+        
