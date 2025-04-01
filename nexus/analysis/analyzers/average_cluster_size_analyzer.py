@@ -46,6 +46,9 @@ class AverageClusterSizeAnalyzer(BaseAnalyzer):
     def get_result(self) -> Dict[str, float]:
         return {"average_cluster_size": self.average_sizes, "std": self.std}
 
+    def print_to_file(self) -> None:
+        pass
+
     def get_std(self) -> Dict[str, float]:
         return self.std
 

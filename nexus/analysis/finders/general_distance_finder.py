@@ -10,6 +10,7 @@ from ...core.cluster import Cluster
 from ...core.frame import Frame
 from ...config.settings import Settings
 from .base_finder import BaseFinder
+from ...utils.geometry import cartesian_to_fractional
 
 
 class GeneralDistanceFinder(BaseFinder):
@@ -25,8 +26,6 @@ class GeneralDistanceFinder(BaseFinder):
         
         # Get the lattice information 
         lattice = self._lattice
-        lxx, lyy, lzz = lattice[0, 0], lattice[1, 1], lattice[2, 2]
-        lattice = np.array([lxx, lyy, lzz])
 
         # Get the wrapped positions of all nodes
         positions = self.frame.get_wrapped_positions()
@@ -42,7 +41,10 @@ class GeneralDistanceFinder(BaseFinder):
 
         # Calculate the graph 
         if self._settings.apply_pbc:
-            kdtree = cKDTree(positions, boxsize=lattice)
+            # Convert positions to fractional
+            positions = cartesian_to_fractional(positions, lattice)
+            # Create the kdtree with pbc inside the unit cell
+            kdtree = cKDTree(positions, boxsize=[1, 1, 1])
         else:
             kdtree = cKDTree(positions)
 
@@ -57,10 +59,20 @@ class GeneralDistanceFinder(BaseFinder):
         # Loop over the node positions
         for i in progress_bar:
             # Query the neighboring nodes within the cutoff distance
-            index = kdtree.query_ball_point(positions[i], max_cutoff)
+            if self._settings.apply_pbc:
+                # Convert cutoff to fractional
+                fractional_cutoff = max_cutoff / np.linalg.norm(lattice, axis=0).max()
+                index = kdtree.query_ball_point(positions[i], fractional_cutoff)
+            else:
+                index = kdtree.query_ball_point(positions[i], max_cutoff)
 
             # Calculate the distance with k nearest neighbors
-            distances, indices = kdtree.query(positions[i], k=len(index))
+            if self._settings.apply_pbc:
+                distances, indices = kdtree.query(positions[i], k=len(index))
+                # Convert distances to cartesian
+                distances *= np.linalg.norm(lattice, axis=0).max()
+            else:
+                distances, indices = kdtree.query(positions[i], k=len(index))
 
             # Check if result is a list or a int
             if isinstance(indices, int):
@@ -81,8 +93,7 @@ class GeneralDistanceFinder(BaseFinder):
                 self._nodes[i].add_neighbor(self._nodes[j])
             
             # Filter the neighbors
-            self.filter_neighbors(idx=i, distances=distances) # TODO: find an implementation
-
+            self.filter_neighbors(idx=i, distances=distances)
 
     def filter_neighbors(self, idx: int, distances: List[float]) -> None:
         new_list_neighbors = []
@@ -114,13 +125,12 @@ class GeneralDistanceFinder(BaseFinder):
         node.indices = [node.node_id for node in new_list_neighbors]
         
 
-    def get_connectivity(self) -> str:
+    def get_connectivities(self) -> List[str]:
         connectivity = self._settings.clustering.connectivity
         if isinstance(connectivity, list) and len(connectivity) == 2:
-            connectivity = f"{connectivity[0]}-{connectivity[1]}"
-            return connectivity
+            return [f"{connectivity[0]}-{connectivity[1]}"]
         else:
-            raise ValueError("Connectivity must be a list of two elements.")
+            raise ValueError("Connectivity for clustering based on distance criteria must be a list of two elements.")
             
     
     def find_clusters(self) -> List[Cluster]:
@@ -159,7 +169,7 @@ class GeneralDistanceFinder(BaseFinder):
                 break
 
             current_cluster = Cluster(
-                connectivity=self.get_connectivity(),
+                connectivity=self.get_connectivities()[0],
                 root_id=root.node_id,
                 size=len(cluster),
                 settings=self._settings

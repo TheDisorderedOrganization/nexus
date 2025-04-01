@@ -19,3 +19,4 @@ launch-nexus-quick-test.py
 .readthedocs.yml
 demo/
 export/
+examples/inputs/ordinary_percolation/*.xyz

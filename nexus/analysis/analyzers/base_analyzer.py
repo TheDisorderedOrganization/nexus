@@ -24,6 +24,10 @@ class BaseAnalyzer(ABC):
     def get_result(self) -> Dict[str, float]:
         pass
 
+    @abstractmethod
+    def print_to_file(self) -> None:
+        pass
+
     def __str__(self) -> str:
         return f"{self.__class__.__name__}"
 

@@ -18,7 +18,9 @@ class Cutoff:
     distance: float
 
     def __str__(self) -> str:
-        return f"{self.type1}-{self.type2} : distance={self.distance}"
+        max_len = 5
+        diff = max_len - len(self.type1) - 1 - len(self.type2)
+        return f"{self.type1}-{self.type2}{' ' * diff} : distance = {self.distance}"
 
     def get_distance(self) -> float:
         return self.distance
@@ -50,6 +52,12 @@ class ClusteringSettings:
     # Calls clustering algorithm with alternating clusters (with coordination number)
     with_alternating: bool = False # Whether to calculate the alternating clusters ie A4-B5, B2-A3
 
+    # Calls clustering algorithm with shared
+    with_number_of_shared: bool = False # Whether to calculate the number of shared
+    shared_mode: str = "all_types" # "all_types", "same_type", "different_type", "<node_type>"
+    shared_threshold: int = 1 # Minimum shared threshold
+
+
     def get_cutoff(self, type1: str, type2: str) -> float:
         for cutoff in self.cutoffs:
             if cutoff.type1 == type1 and cutoff.type2 == type2:
@@ -70,8 +78,19 @@ class ClusteringSettings:
                     continue
                 elif not self.with_alternating and key == "with_alternating":
                     continue
-
-                lines.append(f"\t\t|- {key}: {value}")
+                elif not self.with_number_of_shared and key == "with_number_of_shared":
+                    continue
+                elif not self.with_number_of_shared and key == "shared_mode":
+                    continue
+                elif not self.with_number_of_shared and key == "shared_threshold":
+                    continue
+                if key == "cutoffs":
+                    line1 = f"\t\t|- {key:}:"
+                    for cutoff in value:
+                        line1+=f"\n\t\t\t{str(cutoff)}"
+                    lines.append(line1)
+                else:
+                    lines.append(f"\t\t|- {key}: {value}")
         output = '''
         Clustering Settings:
         -----------------
@@ -211,6 +230,7 @@ class Settings:
     project_name: str = "default"
     export_directory: str = "export"
     file_location: str = "./"
+    parser: str = "xyz"
     number_of_nodes: int = 0
     range_of_frames: Tuple[int, int] = (0, -1)
     apply_pbc: bool = True
@@ -269,6 +289,10 @@ class SettingsBuilder:
         self._settings.file_location = location
         return self
 
+    def with_parser(self, parser: str):
+        self._settings.parser = parser
+        return self
+
     def with_number_of_nodes(self, num_nodes: int):
         self._settings.number_of_nodes = num_nodes
         return self
@@ -321,11 +345,21 @@ class SettingsBuilder:
                 raise ValueError(f"Invalid coordination range: {clustering.coordination_range}")
             if clustering.coordination_mode is None:
                 raise ValueError(f"Invalid coordination mode: {clustering.coordination_mode} with with_coordination_number set to True")
-            if clustering.coordination_range is None:
-                raise ValueError(f"Invalid coordination range: {clustering.coordination_range} with with_coordination_number set to True")
             
         if clustering.with_alternating and not clustering.with_coordination_number:
             raise ValueError(f"Activate with_coordination_number before with_alternating")
+
+        if clustering.with_number_of_shared and not clustering.with_coordination_number:
+            raise ValueError(f"Activate with_coordination_number before with_number_of_shared")
+
+        if clustering.with_number_of_shared and clustering.shared_mode not in modes and clustering.shared_mode not in clustering.node_types:
+            raise ValueError(f"Invalid shared mode: {clustering.shared_mode}")
+
+        if clustering.with_number_of_shared and clustering.shared_threshold < 1:
+            raise ValueError(f"Invalid shared threshold: {clustering.shared_threshold}")
+
+        if clustering.with_number_of_shared and clustering.shared_threshold is None:
+            raise ValueError(f"Invalid shared threshold: {clustering.shared_threshold}")
 
         if clustering.node_types is None:
             raise ValueError(f"Invalid node types: {clustering.node_types}")

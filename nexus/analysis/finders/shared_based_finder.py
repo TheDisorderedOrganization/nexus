@@ -13,7 +13,7 @@ from .base_finder import BaseFinder
 from ...utils.geometry import cartesian_to_fractional
 
 
-class CoordinationBasedFinder(BaseFinder):
+class SharedBasedFinder(BaseFinder):
     def __init__(self, frame: Frame, settings: Settings) -> None:
         self.frame: Frame = frame
         self.clusters: List[Cluster] = []
@@ -143,6 +143,18 @@ class CoordinationBasedFinder(BaseFinder):
         else:
             node.set_coordination(len([n for n in node.neighbors if n.symbol == mode]))
 
+    def get_number_of_shared(self, node_1: Node, node_2: Node) -> int:
+        mode = self._settings.clustering.shared_mode
+
+        if mode == 'all_types':
+            return len([n for n in node_1.neighbors if n in node_2.neighbors])
+        elif mode == 'same_type':
+            return len([n for n in node_1.neighbors if n.symbol == node_1.symbol and n in node_2.neighbors])
+        elif mode == 'different_type':
+            return len([n for n in node_1.neighbors if n.symbol != node_1.symbol and n in node_2.neighbors])
+        else:
+            return len([n for n in node_1.neighbors if n.symbol == mode and n in node_2.neighbors])
+
     def find(self, node: Node) -> Node:
         if node.parent != node:
             node.parent = self.find(node.parent)
@@ -230,7 +242,8 @@ class CoordinationBasedFinder(BaseFinder):
                     if neighbor.symbol == type2:
                         for neighbor2 in neighbor.neighbors:
                             if (node.symbol == type1 and neighbor2.symbol == type3) and (node.coordination == z1 and neighbor2.coordination == z2):
-                                self.union(neighbor2, node)
+                                if self.get_number_of_shared(node, neighbor2) >= self._settings.clustering.shared_threshold:
+                                    self.union(neighbor2, node)
         
         elif self._settings.clustering.criteria == 'distance':
             type1 = self._settings.clustering.connectivity[0]
@@ -239,7 +252,8 @@ class CoordinationBasedFinder(BaseFinder):
             for node in progress_bar:
                 for neighbor in node.neighbors:
                     if (node.symbol == type1 and neighbor.symbol == type2) and (node.coordination == z1 and neighbor.coordination == z2):
-                        self.union(neighbor, node)
+                        if self.get_number_of_shared(node, neighbor) >= self._settings.clustering.shared_threshold:
+                            self.union(neighbor, node)
         
         clusters_found = {}
 

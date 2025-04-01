@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import List
 
 from ...core.frame import Frame
 from ...core.node import Node
@@ -35,5 +36,11 @@ class BaseFinder(ABC):
         pass
 
     @abstractmethod
-    def get_connectivity(self) -> None:
+    def get_connectivities(self) -> List[str]:
         pass
+
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}({self._settings})"
+
+    def __repr__(self) -> str:
+        return self.__str__()

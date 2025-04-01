@@ -32,8 +32,19 @@ def main(settings: Settings):
     for analyzer in settings.analysis.get_analyzers():
         analyzers.append(AnalyzerFactory(frame_processed, verbose=settings.verbose).get_analyzer(analyzer))
 
+    progress_bar_kwargs = {
+            "disable": not settings.verbose,
+            "leave": False,
+            "ncols": os.get_terminal_size().columns,
+            "colour": "red"
+        }
 
-    for i, frame in enumerate(system.iter_frames()):
+    progress_bar = tqdm(enumerate(system.iter_frames()), desc="Processing frames ...", unit="frame", total=total+1, **progress_bar_kwargs)
+
+    # Process frames
+    for i, frame in progress_bar:
+        j = i + settings.range_of_frames[0]
+        progress_bar.set_description(f"Processing frame {j} of {settings.range_of_frames} frames...")
         if settings.lattice.apply_custom_lattice:
             frame.set_lattice(settings.lattice.custom_lattice)
         
@@ -46,8 +57,18 @@ def main(settings: Settings):
 
         for analyzer in analyzers:
             analyzer.analyze(frame)
-            if analyzer.__class__.__name__ == "AverageClusterSizeAnalyzer":
-                print(analyzer.get_result())
+
+    # Debug get results
+    for analyzer in analyzers:
+        print(analyzer.get_result())
+
+    # Process results
+    for analyzer in analyzers:
+        analyzer.finalize()
+
+    # Print results
+    for analyzer in analyzers:
+        analyzer.print_to_file()              
         
         
     

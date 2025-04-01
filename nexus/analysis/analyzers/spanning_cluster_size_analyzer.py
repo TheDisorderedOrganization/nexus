@@ -36,6 +36,9 @@ class SpanningClusterSizeAnalyzer(BaseAnalyzer):
     def get_result(self) -> Dict[str, float]:
         return {"spanning_cluster_size": self.spanning_cluster_size, "std": self.std}
 
+    def print_to_file(self) -> None:
+        pass
+
     def update_frame_processed(self, frame: Frame) -> None:
         self.frame_processed.append(frame)
 

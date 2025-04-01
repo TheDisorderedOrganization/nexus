@@ -12,6 +12,7 @@ from .analyzers.correlation_length_analyzer import CorrelationLengthAnalyzer
 from .finder_factory import FinderFactory
 from .finders.base_finder import BaseFinder
 from .finders.general_distance_finder import GeneralDistanceFinder
+from .finders.general_bond_finder import GeneralBondFinder
 from .finders.coordination_based_finder import CoordinationBasedFinder
 
 __all__ = [
@@ -28,5 +29,6 @@ __all__ = [
     "FinderFactory",
     "BaseFinder",
     "GeneralDistanceFinder",
+    "GeneralBondFinder",
     "CoordinationBasedFinder"
 ]

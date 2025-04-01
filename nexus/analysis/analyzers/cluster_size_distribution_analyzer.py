@@ -22,6 +22,9 @@ class ClusterSizeDistributionAnalyzer(BaseAnalyzer):
     def get_result(self) -> Dict[str, float]:
         return {}
 
+    def print_to_file(self) -> None:
+        pass
+
     def __str__(self) -> str:
         return f"{self.__class__.__name__}"
 

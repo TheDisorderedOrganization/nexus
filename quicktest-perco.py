@@ -23,16 +23,17 @@ config_analysis = c.AnalysisSettings(
 )
 
 # Path to the trajectory file
-path = 'examples/inputs/plant/20200606.xyz'
+path = './examples/inputs/ordinary_percolation/percolation_sites_0.30.xyz'
 
 # Settings builder
 settings = (SettingsBuilder() \
     .with_project_name('test')          # Name of the project \
     .with_export_directory('export')    # Directory to export results \
     .with_file_location(path)           # Path to the trajectory file \
-    .with_number_of_nodes(9519)        # Number of nodes in the trajectory \
+    .with_parser("xyz")                 # Parser to use (default: xyz) \
+    .with_number_of_nodes(37080)        # Number of nodes in the trajectory \
     .with_range_of_frames(0, 0)        # Range of frames to process (0 to -1 = all frames) \
-    .with_apply_pbc(False)              # Whether to apply periodic boundary conditions (True = apply) \
+    .with_apply_pbc(True)              # Whether to apply periodic boundary conditions (True = apply) \
     .with_verbose(True)                 # Whether to print settings, progress bars and other information (True = print) \
     .with_lattice(config_lattice)       # Lattice settings \
     .with_clustering(config_clustering) # Clustering settings \

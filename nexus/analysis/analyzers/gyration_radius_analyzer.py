@@ -19,6 +19,9 @@ class GyrationRadiusAnalyzer(BaseAnalyzer):
     def update_frame_processed(self, frame: Frame) -> None:
         self.frame_processed.append(frame)
 
+    def print_to_file(self) -> None:
+        pass
+
     def __str__(self) -> str:
         return f"{self.__class__.__name__}"
 

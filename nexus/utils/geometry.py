@@ -146,6 +146,31 @@ def calculate_pbc_angle(position1: np.ndarray, position2: np.ndarray, position3:
 
     return angle_deg
 
+def cartesian_to_fractional(position: np.ndarray, lattice: np.ndarray) -> np.ndarray:
+    """ Convert a Cartesian position to fractional coordinates in a periodic space.
+        (ref: https://en.wikipedia.org/wiki/Fractional_coordinates#Relationship_between_fractional_and_Cartesian_coordinates)
+        
+        Args:
+            position (np.ndarray): The Cartesian position
+            lattice (np.ndarray): The lattice of the system
+        
+        Returns:
+            np.ndarray: The fractional coordinates
+    """
+    return np.linalg.solve(lattice.T, position.T).T
+
+def fractional_to_cartesian(position: np.ndarray, lattice: np.ndarray) -> np.ndarray:
+    """ Convert a fractional position to Cartesian coordinates in a periodic space.
+        (ref: https://en.wikipedia.org/wiki/Fractional_coordinates#Relationship_between_fractional_and_Cartesian_coordinates)
+        
+        Args:
+            position (np.ndarray): The fractional position
+            lattice (np.ndarray): The lattice of the system
+        
+        Returns:
+            np.ndarray: The Cartesian coordinates
+    """
+    return np.dot(position, lattice)
 
 __all__ = [
     'wrap_position',

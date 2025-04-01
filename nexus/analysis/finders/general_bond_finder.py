@@ -6,14 +6,14 @@ from tqdm import tqdm
 
 # Internal imports
 from ...core.node import Node
-from ...core.frame import Frame
 from ...core.cluster import Cluster
+from ...core.frame import Frame
 from ...config.settings import Settings
 from .base_finder import BaseFinder
 from ...utils.geometry import cartesian_to_fractional
 
 
-class CoordinationBasedFinder(BaseFinder):
+class GeneralBondFinder(BaseFinder):
     def __init__(self, frame: Frame, settings: Settings) -> None:
         self.frame: Frame = frame
         self.clusters: List[Cluster] = []
@@ -95,10 +95,6 @@ class CoordinationBasedFinder(BaseFinder):
             # Filter the neighbors
             self.filter_neighbors(idx=i, distances=distances)
 
-            # Calculate the coordination number
-            self.calculate_coordination(idx=i)
-            
-
     def filter_neighbors(self, idx: int, distances: List[float]) -> None:
         new_list_neighbors = []
         new_list_distances  = []
@@ -127,119 +123,38 @@ class CoordinationBasedFinder(BaseFinder):
         node.neighbors = new_list_neighbors
         node.distances = new_list_distances
         node.indices = [node.node_id for node in new_list_neighbors]
-
-    def calculate_coordination(self, idx: int) -> None:
-        node = self._nodes[idx]
         
-        mode = self._settings.clustering.coordination_mode
-
-        # "all_types", "same_type", "different_type", "<node_type>"
-        if mode == 'all_types':
-            node.set_coordination(len(node.neighbors))
-        elif mode == 'same_type':
-            node.set_coordination(len([n for n in node.neighbors if n.symbol == node.symbol]))
-        elif mode == 'different_type':
-            node.set_coordination(len([n for n in node.neighbors if n.symbol != node.symbol]))
-        else:
-            node.set_coordination(len([n for n in node.neighbors if n.symbol == mode]))
-
-    def find(self, node: Node) -> Node:
-        if node.parent != node:
-            node.parent = self.find(node.parent)
-        return node.parent
-
-    def union(self, node_1: Node, node_2: Node) -> None:
-        root_1 = self.find(node_1)
-        root_2 = self.find(node_2)
-        
-        if root_1 != root_2:
-            root_2.parent = root_1
 
     def get_connectivities(self) -> List[str]:
-        if self._settings.clustering.criteria == 'bond':
-            type1 = self._settings.clustering.connectivity[0]
-            type2 = self._settings.clustering.connectivity[1]
-            type3 = self._settings.clustering.connectivity[2]
-
-            coordination_range = self._settings.clustering.coordination_range
-            if self._settings.clustering.with_alternating:
-                connectivities = []
-                for i in range(coordination_range[0], coordination_range[1] + 1):
-                    connectivities.append(f"{type1}{type2}_{i}-{type3}{type2}_{i}")
-                    if i+1 <= coordination_range[1]:
-                        connectivities.append(f"{type3}{type2}_{i}-{type1}{type2}_{i+1}")
-            else:
-                connectivities = [f"{type1}{type2}_{i}-{type3}{type2}_{i}" for i in range(coordination_range[0], coordination_range[1] + 1)]
+        connectivity = self._settings.clustering.connectivity
+        if isinstance(connectivity, list) and len(connectivity) == 3:
+            connectivity = [f"{connectivity[0]}-{connectivity[1]}-{connectivity[2]}"]
+            return connectivity
         else:
-            type1 = self._settings.clustering.connectivity[0]
-            type2 = self._settings.clustering.connectivity[1]
+            raise ValueError("Connectivity for clustering based on bond criteria must be a list of three elements.")
+            
+    
+    def find_clusters(self) -> List[Cluster]:
+        networking_nodes = [node for node in self._nodes if node.symbol in self._settings.clustering.node_types and node.symbol != self._settings.clustering.connectivity[1]]
+        connectivity = self._settings.clustering.connectivity
 
-            coordination_range = self._settings.clustering.coordination_range            
-            if self._settings.clustering.with_alternating:
-                connectivities = []
-                for i in range(coordination_range[0], coordination_range[1] + 1):
-                    connectivities.append(f"{type1}_{i}-{type2}_{i}")
-                    if i+1 <= coordination_range[1]:
-                        connectivities.append(f"{type2}_{i}-{type1}_{i+1}")
-            else:
-                connectivities = []
-                for i in range(coordination_range[0], coordination_range[1] + 1):
-                    connectivities.append(f"{type1}_{i}-{type2}_{i}")
-
-        return connectivities
-
-    def find_clusters(self) -> None:
-        # Select the networking nodes based on clustering settings
-        # 1 - check node types
-        if self._settings.clustering.criteria == 'bond':
-            networking_nodes = [node for node in self._nodes if node.symbol in self._settings.clustering.node_types and node.symbol != self._settings.clustering.connectivity[1]]
-        else:
-            networking_nodes = [node for node in self._nodes if node.symbol in self._settings.clustering.node_types]
-        
-        # 2 - generate connectivities based on coordination number range
-        connectivities = self.get_connectivities()
-        
-        # 3 - generate clusters based on connectivities
-        for connectivity in connectivities:
-            z1, z2 = connectivity.split('-')
-            z1 = int(z1.split('_')[1])
-            z2 = int(z2.split('_')[1])
-            self._find_cluster(networking_nodes, connectivity, z1, z2)
-        
-        # 4 - return clusters
-        return self.clusters
-
-    def _find_cluster(self, networking_nodes: List[Node], connectivity: str, z1: int, z2: int) -> None:
         number_of_nodes = 0
-
+        
         progress_bar_kwargs = {
             "disable": not self._settings.verbose,
             "leave": False,
             "ncols": os.get_terminal_size().columns,
-            "colour": "blue"
+            "colour": "green"
         }
-        progress_bar = tqdm(networking_nodes, desc=f"Finding clusters {connectivity} ...", **progress_bar_kwargs)
+        progress_bar = tqdm(networking_nodes, desc="Finding clusters ...", **progress_bar_kwargs)
 
-        if self._settings.clustering.criteria == 'bond':
-            type1 = self._settings.clustering.connectivity[0]
-            type2 = self._settings.clustering.connectivity[1]
-            type3 = self._settings.clustering.connectivity[2]
-            
-            for node in progress_bar:
+        for node in progress_bar:
+            if node.symbol == connectivity[0]:
                 for neighbor in node.neighbors:
-                    if neighbor.symbol == type2:
+                    if neighbor.symbol == connectivity[1]:
                         for neighbor2 in neighbor.neighbors:
-                            if (node.symbol == type1 and neighbor2.symbol == type3) and (node.coordination == z1 and neighbor2.coordination == z2):
+                            if neighbor2.symbol == connectivity[2]:
                                 self.union(neighbor2, node)
-        
-        elif self._settings.clustering.criteria == 'distance':
-            type1 = self._settings.clustering.connectivity[0]
-            type2 = self._settings.clustering.connectivity[1]
-            
-            for node in progress_bar:
-                for neighbor in node.neighbors:
-                    if (node.symbol == type1 and neighbor.symbol == type2) and (node.coordination == z1 and neighbor.coordination == z2):
-                        self.union(neighbor, node)
         
         clusters_found = {}
 
@@ -247,7 +162,7 @@ class CoordinationBasedFinder(BaseFinder):
             root = self.find(node)
             clusters_found.setdefault(root.node_id, []).append(node)
 
-        progress_bar = tqdm(range(len(clusters_found)), desc=f"Calculating clusters {connectivity} properties ...", **progress_bar_kwargs)  
+        progress_bar = tqdm(range(len(clusters_found)), desc="Calculating clusters properties ...", **progress_bar_kwargs)  
 
         for i in progress_bar:
             cluster = list(clusters_found.values())[i]
@@ -257,7 +172,7 @@ class CoordinationBasedFinder(BaseFinder):
                 break
 
             current_cluster = Cluster(
-                connectivity=connectivity,
+                connectivity=self.get_connectivities()[0],
                 root_id=root.node_id,
                 size=len(cluster),
                 settings=self._settings
@@ -280,5 +195,4 @@ class CoordinationBasedFinder(BaseFinder):
         for cluster in self.clusters:
             cluster.total_nodes = number_of_nodes
 
-        return self.clusters                             
-            
+        return self.clusters
