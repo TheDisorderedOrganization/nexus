@@ -56,8 +56,9 @@ def main(settings: Settings):
         finder = FinderFactory(frame, settings).get_finder(settings)
         finder.find_neighbors()
         clusters = finder.find_clusters()
-        
         frame.set_clusters(clusters)
+        
+        print(frame)
 
         for analyzer in analyzers:
             analyzer.analyze(frame)

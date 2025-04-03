@@ -1,0 +1,7 @@
+# Average cluster size ➜ 51 frames averaged.
+# Concentration ➜ Average cluster size +/- Error # Connectivity
+  0.232621 ➜   2.904762 +/- 0.00000    # SiO_4-SiO_4
+  0.244415 ➜   9.876672 +/- 0.00000    # SiO_4-SiO_5
+  0.079108 ➜  49.811890 +/- 0.00000    # SiO_5-SiO_5
+  0.042328 ➜   9.772569 +/- 0.00000    # SiO_5-SiO_6
+  0.007165 ➜   2.866667 +/- 0.00000    # SiO_6-SiO_6

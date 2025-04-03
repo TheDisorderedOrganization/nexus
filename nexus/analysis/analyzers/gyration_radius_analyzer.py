@@ -9,10 +9,11 @@ class GyrationRadiusAnalyzer(BaseAnalyzer):
         super().__init__(settings)
         self.gyration_radii = {}
         self.std = {}
+        self.concentrations = {}
 
     def analyze(self, frame: Frame) -> None:
         clusters = frame.get_clusters()
-        self.concentrations.append(frame.get_concentration())
+        concentrations = frame.get_concentration()
         
         # get all connectivities
         connectivities = [c.get_connectivity() for c in clusters]
@@ -30,7 +31,7 @@ class GyrationRadiusAnalyzer(BaseAnalyzer):
                     if size not in distribution:
                         distribution[size] = []
                     distribution[size].append(gyration_radius)
-
+                self.concentrations[connectivity] = concentrations
                 self.gyration_radii[connectivity] = distribution
 
     def finalize(self) -> None:

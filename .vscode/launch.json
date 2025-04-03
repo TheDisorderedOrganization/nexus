@@ -8,7 +8,7 @@
             "name": "Python Debugger: Current File",
             "type": "debugpy",
             "request": "launch",
-            "program": "quicktest-plant.py",
+            "program": "quicktest-SiO2.py",
             "console": "integratedTerminal"
         }
     ]

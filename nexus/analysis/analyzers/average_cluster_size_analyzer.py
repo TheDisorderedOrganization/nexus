@@ -59,11 +59,11 @@ class AverageClusterSizeAnalyzer(BaseAnalyzer):
 
     def finalize(self) -> Dict[str, float]:
         for connectivity, sizes in self.average_sizes.items():
-            self.average_sizes[connectivity] = np.mean(sizes)
             if len(sizes) == 1:
                 self.std[connectivity] = 0.0
             else:
                 self.std[connectivity] = np.std(sizes, ddof=1)
+            self.average_sizes[connectivity] = np.mean(sizes)
             # replace eventual nan with 0.0
             self.std[connectivity] = np.nan_to_num(self.std[connectivity])
 

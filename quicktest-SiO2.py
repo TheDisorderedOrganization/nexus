@@ -51,7 +51,7 @@ settings = (SettingsBuilder() \
     .with_project_name('SiO2')          # Name of the project \
     .with_export_directory('examples/exports')    # Directory to export results \
     .with_file_location(path)           # Path to the trajectory file \
-    .with_range_of_frames(4, 7)        # Range of frames to process (0 to -1 = all frames) \
+    .with_range_of_frames(0, -1)        # Range of frames to process (0 to -1 = all frames) \
     .with_apply_pbc(True)              # Whether to apply periodic boundary conditions (True = apply) \
     .with_verbose(True)                 # Whether to print settings, progress bars and other information (True = print) \
     
