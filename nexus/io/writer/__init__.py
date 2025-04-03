@@ -6,3 +6,9 @@
 #       - add support for summary writers
 #       - add support for statistics writers
 #       - add support for performance writers
+
+from .clusters_writer import ClustersWriter
+
+__all__ = [
+    'ClustersWriter'
+]

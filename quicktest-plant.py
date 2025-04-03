@@ -27,10 +27,9 @@ path = 'examples/inputs/plant/20200606.xyz'
 
 # Settings builder
 settings = (SettingsBuilder() \
-    .with_project_name('test')          # Name of the project \
-    .with_export_directory('export')    # Directory to export results \
+    .with_project_name('plan')          # Name of the project \
+    .with_export_directory('examples/exports')    # Directory to export results \
     .with_file_location(path)           # Path to the trajectory file \
-    .with_number_of_nodes(9519)        # Number of nodes in the trajectory \
     .with_range_of_frames(0, 0)        # Range of frames to process (0 to -1 = all frames) \
     .with_apply_pbc(False)              # Whether to apply periodic boundary conditions (True = apply) \
     .with_verbose(True)                 # Whether to print settings, progress bars and other information (True = print) \

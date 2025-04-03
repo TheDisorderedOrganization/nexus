@@ -36,6 +36,7 @@ class Node:
     position: np.ndarray = field(compare=False, repr=False)
     parent: Optional['Node'] = field(default=None, compare=False, repr=False)
     neighbors: List['Node'] = field(default_factory=list, compare=False, repr=False)
+    cluster_id: Optional[int] = field(default=None, compare=False, repr=False)
     distances: Optional[List[float]] = field(default=None, compare=False, repr=False)
     indices: Optional[List[int]] = field(default=None, compare=False, repr=False)
     mass: Optional[float] = field(default=None, compare=True, repr=True)
@@ -68,6 +69,9 @@ class Node:
 
         if self.parent is None:
             object.__setattr__(self, 'parent', self)
+
+        if self.cluster_id is None:
+            object.__setattr__(self, 'cluster_id', self.node_id)    
 
     @staticmethod
     def wrap_position(position: np.ndarray, lattice: np.ndarray) -> np.ndarray:

@@ -2,11 +2,12 @@ from abc import ABC, abstractmethod
 from typing import List, Dict
 
 from ...core.frame import Frame   
+from ...config.settings import Settings
 
 class BaseAnalyzer(ABC):
-    def __init__(self, frame_processed: List[Frame], verbose: bool = True) -> None:
-        self.frame_processed: List[Frame] = frame_processed
-        self.verbose: bool = verbose
+    def __init__(self, settings: Settings) -> None:
+        self.frame_processed: List[Frame] = []
+        self._settings: Settings = settings
 
     @abstractmethod
     def analyze(self, frame: Frame) -> None:

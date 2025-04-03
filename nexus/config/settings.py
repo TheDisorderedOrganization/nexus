@@ -38,6 +38,8 @@ class ClusteringSettings:
     node_masses: List[float] = field(default_factory=lambda: []) # List of node masses in reduced units
     connectivity: List[str] = field(default_factory=lambda: []) # List of connectivity
     cutoffs: List[Cutoff] = field(default_factory=lambda: []) # Cutoffs for distance and bond criteria
+    with_printed_unwrapped_clusters: bool = False # Whether to print the unwrapped clusters
+    print_mode: str = 'none' # "all", "connectivity", "individual", "none"
 
     # Coordination number ie number of nearest neighbors
     # - all_types: all types of nodes are considered A-AB, B-AB
@@ -105,6 +107,7 @@ class AnalysisSettings:
     
     Attributes:
     """
+    overwrite: bool = True # Whether to overwrite the existing file, if False, appends results to the file
     with_all: bool = False # Whether to calculate all the properties
     with_average_cluster_size: bool = False # Whether to calculate the average cluster size
     with_largest_cluster_size: bool = False # Whether to calculate the largest cluster size
@@ -114,8 +117,6 @@ class AnalysisSettings:
     with_percolation_probability: bool = False # Whether to calculate the percolation probability
     with_order_parameter: bool = False # Whether to calculate the order parameter
     with_cluster_size_distribution: bool = False # Whether to calculate the cluster size distribution
-    with_printed_unwrapped_clusters: bool = False # Whether to print the unwrapped clusters
-    _disable_warnings: bool = False # Whether to disable warnings
 
     def get_analyzers(self) -> List[str]:
         analyzers = []
@@ -167,10 +168,6 @@ class AnalysisSettings:
                 elif not self.with_order_parameter and key == "with_order_parameter":
                     continue
                 elif not self.with_cluster_size_distribution and key == "with_cluster_size_distribution":
-                    continue
-                elif key == "_with_printed_unwrapped_clusters":
-                    continue
-                elif key == "_disable_warnings":
                     continue
                 lines.append(f"\t\t|- {key}: {value}")
         output = '''
@@ -230,8 +227,6 @@ class Settings:
     project_name: str = "default"
     export_directory: str = "export"
     file_location: str = "./"
-    parser: str = "xyz"
-    number_of_nodes: int = 0
     range_of_frames: Tuple[int, int] = (0, -1)
     apply_pbc: bool = True
     verbose: bool = False
@@ -289,14 +284,6 @@ class SettingsBuilder:
         self._settings.file_location = location
         return self
 
-    def with_parser(self, parser: str):
-        self._settings.parser = parser
-        return self
-
-    def with_number_of_nodes(self, num_nodes: int):
-        self._settings.number_of_nodes = num_nodes
-        return self
-
     def with_range_of_frames(self, start: int, end: Optional[int] = None):
         self._settings.set_range_of_frames(start, end)
         return self
@@ -314,9 +301,6 @@ class SettingsBuilder:
         return self
 
     def with_analysis(self, analysis: AnalysisSettings):
-        if analysis.with_printed_unwrapped_clusters and not analysis._disable_warnings:
-            print("Warning: with_printed_unwrapped_clusters is enabled. This may be disk usage consuming.")
-
         self._settings.analysis = analysis
         return self
 
@@ -369,7 +353,10 @@ class SettingsBuilder:
 
         if len(clustering.node_types) != len(clustering.node_masses):
             raise ValueError(f"Invalid node types and masses: {clustering.node_types} and {clustering.node_masses}")
-            
+
+        if clustering.with_printed_unwrapped_clusters and clustering.print_mode not in ["all", "connectivity", "individual", "none"]:
+            raise ValueError(f"Invalid print_mode: {clustering.print_mode}")
+
         self._settings.clustering = clustering
         return self
 

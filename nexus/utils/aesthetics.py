@@ -1,11 +1,13 @@
 import colorsys
+from collections import OrderedDict
+from colorama import Fore, Style
 
 __all__ = [
     'print_title',
-    'generate_color_gradient'
+    'generate_color_gradient',
+    'remove_duplicate_lines'
 ]
 
-from colorama import Fore, Style
 
 """
 Module: print_title
@@ -82,3 +84,28 @@ def generate_color_gradient(num_iterations):
         color_gradient.append(rgb)
 
     return color_gradient
+
+def remove_duplicate_lines(filepath: str) -> None:
+    """
+    Read a file, remove duplicate lines, and rewrite the file with unique lines.
+    
+    Parameters
+    ----------
+    filepath : str
+        The path to the file to be read and rewritten.
+        
+    Returns
+    -------
+    None
+    """
+    
+    # Read the file and store unique lines in an OrderedDict
+    unique_lines = OrderedDict()
+    with open(filepath, 'r') as file:
+        for line in file:
+            unique_lines[line] = None
+
+    # Rewrite the unique lines back to the file
+    with open(filepath, 'w') as file:
+        for line in unique_lines:
+            file.write(line)

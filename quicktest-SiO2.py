@@ -29,15 +29,18 @@ config_clustering = c.ClusteringSettings(
 
     with_alternating=True, # if with_coordination_number is True, calculate alternating coordination number ie 4-5, 5-6 ...
     
-    with_number_of_shared=True, # if with_coordination_number is True, calculate number of shared
+    with_number_of_shared=False, # if with_coordination_number is True, calculate number of shared
     shared_mode="O", # "all_types" or "same_type" or "different_type" or "<node_type>"
     shared_threshold=2, # Minimum of shared neighbors
 )
 
 # Analysis settings
 config_analysis = c.AnalysisSettings(
-    with_all=True,
-    with_printed_unwrapped_clusters=True,
+    with_all=False,
+    with_average_cluster_size=True,
+    with_spanning_cluster_size=True,
+    with_largest_cluster_size=True,
+    with_order_parameter=True,
 )
 
 # Path to the trajectory file
@@ -45,10 +48,9 @@ path = 'examples/inputs/SiO2-27216at-pos67B.xyz'
 
 # Settings builder
 settings = (SettingsBuilder() \
-    .with_project_name('test')          # Name of the project \
-    .with_export_directory('export')    # Directory to export results \
+    .with_project_name('SiO2')          # Name of the project \
+    .with_export_directory('examples/exports')    # Directory to export results \
     .with_file_location(path)           # Path to the trajectory file \
-    .with_number_of_nodes(27216)        # Number of nodes in the trajectory \
     .with_range_of_frames(4, 7)        # Range of frames to process (0 to -1 = all frames) \
     .with_apply_pbc(True)              # Whether to apply periodic boundary conditions (True = apply) \
     .with_verbose(True)                 # Whether to print settings, progress bars and other information (True = print) \

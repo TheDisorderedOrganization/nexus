@@ -7,12 +7,17 @@ from .io.reader.reader_factory import ReaderFactory
 from .core.system import System
 from .analysis.finder_factory import FinderFactory
 from .analysis.analyzer_factory import AnalyzerFactory
+from .io.writer.writer_factory import WriterFactory
 from .utils import *
 
 def main(settings: Settings):
     """
     Main function to test the package.
     """
+    # Create export directory
+    settings.export_directory = os.path.join(settings.export_directory, settings.project_name)
+    if not os.path.exists(settings.export_directory):
+        os.makedirs(settings.export_directory)
 
     if settings.verbose:
         print(settings)
@@ -28,9 +33,8 @@ def main(settings: Settings):
 
     # Initialize analyzers
     analyzers = []
-    frame_processed = []
     for analyzer in settings.analysis.get_analyzers():
-        analyzers.append(AnalyzerFactory(frame_processed, verbose=settings.verbose).get_analyzer(analyzer))
+        analyzers.append(AnalyzerFactory(settings).get_analyzer(analyzer))
 
     progress_bar_kwargs = {
             "disable": not settings.verbose,
@@ -58,13 +62,10 @@ def main(settings: Settings):
         for analyzer in analyzers:
             analyzer.analyze(frame)
 
-    # Debug get results
-    for analyzer in analyzers:
-        print(analyzer.get_result())
-
-    # Process results
-    for analyzer in analyzers:
-        analyzer.finalize()
+        if settings.clustering.with_printed_unwrapped_clusters:
+            writer = WriterFactory(settings).get_writer('ClustersWriter')
+            writer.set_clusters(frame.get_clusters())
+            writer.write()
 
     # Print results
     for analyzer in analyzers:

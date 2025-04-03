@@ -20,3 +20,5 @@ launch-nexus-quick-test.py
 demo/
 export/
 examples/inputs/ordinary_percolation/*.xyz
+examples/inputs/flips/temperature3/*.xyz
+examples/inputs/flips/*.zip

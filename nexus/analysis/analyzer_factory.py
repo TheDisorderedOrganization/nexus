@@ -1,5 +1,5 @@
-from typing import Optional, List
-from ..core.frame import Frame
+from typing import Optional
+from ..config.settings import Settings
 from .analyzers.base_analyzer import BaseAnalyzer
 from .analyzers.average_cluster_size_analyzer import AverageClusterSizeAnalyzer
 from .analyzers.largest_cluster_size_analyzer import LargestClusterSizeAnalyzer
@@ -11,17 +11,17 @@ from .analyzers.gyration_radius_analyzer import GyrationRadiusAnalyzer
 from .analyzers.correlation_length_analyzer import CorrelationLengthAnalyzer
 
 class AnalyzerFactory:
-    def __init__(self, frame_processed: List[Frame], verbose: bool = True):
+    def __init__(self, settings: Settings, verbose: bool = True):
         self._analyzers = {}
         # Register other analyzers here
-        self.register_analyzer(AverageClusterSizeAnalyzer(frame_processed, verbose))
-        self.register_analyzer(LargestClusterSizeAnalyzer(frame_processed, verbose))
-        self.register_analyzer(SpanningClusterSizeAnalyzer(frame_processed, verbose))
-        self.register_analyzer(PercolationProbabilityAnalyzer(frame_processed, verbose))
-        self.register_analyzer(OrderParameterAnalyzer(frame_processed, verbose))
-        self.register_analyzer(ClusterSizeDistributionAnalyzer(frame_processed, verbose))
-        self.register_analyzer(GyrationRadiusAnalyzer(frame_processed, verbose))
-        self.register_analyzer(CorrelationLengthAnalyzer(frame_processed, verbose))
+        self.register_analyzer(AverageClusterSizeAnalyzer(settings))
+        self.register_analyzer(LargestClusterSizeAnalyzer(settings))
+        self.register_analyzer(SpanningClusterSizeAnalyzer(settings))
+        self.register_analyzer(PercolationProbabilityAnalyzer(settings))
+        self.register_analyzer(OrderParameterAnalyzer(settings))
+        self.register_analyzer(ClusterSizeDistributionAnalyzer(settings))
+        self.register_analyzer(GyrationRadiusAnalyzer(settings))
+        self.register_analyzer(CorrelationLengthAnalyzer(settings))
 
     def register_analyzer(self, analyzer: BaseAnalyzer) -> None:
         self._analyzers[analyzer.__class__.__name__] = analyzer

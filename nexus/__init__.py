@@ -13,6 +13,7 @@ from .core.system import System
 
 # Import IO components
 from .io.reader.reader_factory import ReaderFactory
+from .io.parser.parser import Parser
 # from .io.writer.writer_factory import WriterFactory # TODO: implement writers
 
 # Import settings

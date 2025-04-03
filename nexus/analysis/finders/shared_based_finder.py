@@ -256,6 +256,7 @@ class SharedBasedFinder(BaseFinder):
                             self.union(neighbor, node)
         
         clusters_found = {}
+        local_clusters = []
 
         for node in networking_nodes:
             root = self.find(node)
@@ -274,16 +275,19 @@ class SharedBasedFinder(BaseFinder):
                 connectivity=connectivity,
                 root_id=root.node_id,
                 size=len(cluster),
-                settings=self._settings
+                settings=self._settings,
+                lattice=self._lattice
             )
 
             for node in cluster:
                 current_cluster.add_node(node)
                 if len(cluster) > 1:
                     number_of_nodes += 1
-            
-            self.clusters.append(current_cluster)
-            self._counter += 1
+
+            if len(cluster) > 1:
+                self.clusters.append(current_cluster)
+                local_clusters.append(current_cluster)
+                self._counter += 1
 
             for node in cluster:
                 node.reset_parent()
@@ -291,8 +295,14 @@ class SharedBasedFinder(BaseFinder):
         if number_of_nodes == 0:
             number_of_nodes = 1 # avoid zero division
             
-        for cluster in self.clusters:
+        for cluster in local_clusters:
             cluster.total_nodes = number_of_nodes
+            cluster.calculate_unwrapped_positions()
+            cluster.calculate_center_of_mass()
+            cluster.calculate_gyration_radius()
+            cluster.calculate_percolation_probability()
+            cluster.calculate_concentration()
+            cluster.calculate_order_parameter()
 
         return self.clusters                             
             

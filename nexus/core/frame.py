@@ -109,7 +109,23 @@ class Frame:
 
     def set_clusters(self, clusters: List[Cluster]) -> None:
         """ Set the clusters of the frame """
+        for cluster in clusters:
+            cluster.frame_id = self.frame_id
+            cluster.set_lattice(self.lattice)
         self.clusters = clusters
+
+    def get_concentration(self) -> float:
+        """ Get the concentrations of each cluster connectivity in the frame """
+        concentrations = {}
+        unique_connectivities = np.unique([c.get_connectivity() for c in self.clusters])
+        for connectivity in unique_connectivities:
+            for cluster in self.clusters:
+                if cluster.get_connectivity() == connectivity:
+                    concentrations[connectivity] = cluster.total_nodes / len(self.nodes)
+                    break
+
+        return concentrations
+
 
     def __len__(self) -> int:
         """ Get the number of nodes in the frame """

@@ -1,11 +1,13 @@
 from typing import List, Dict
 from ...core.frame import Frame
 from .base_analyzer import BaseAnalyzer
+from ...config.settings import Settings
+import numpy as np
 
 
 class PercolationProbabilityAnalyzer(BaseAnalyzer):
-    def __init__(self, frame_processed: List[Frame], verbose: bool = True) -> None:
-        super().__init__(frame_processed, verbose)
+    def __init__(self, settings: Settings) -> None:
+        super().__init__(settings)
 
     def analyze(self, frame: Frame) -> None:
         pass
