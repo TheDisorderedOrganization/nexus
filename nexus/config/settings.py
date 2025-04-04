@@ -216,12 +216,13 @@ class LatticeSettings:
     apply_lattice_to_all_frames: bool = True
 
     def __str__(self) -> str:
-        if not self.apply_custom_lattice:
-            return ""
         lines = []
         for key, value in self.__dict__.items():
             if value is not None:
-                if key == "custom_lattice":
+                if not self.apply_custom_lattice and key == "apply_custom_lattice":
+                    lines.append(f"\t\t|- {key}: {value}")
+                    break                    
+                elif key == "custom_lattice":
                     line1 = f"\t\t|- {key}:"
                     lx = np.array2string(value[0], separator=', ', formatter={'float_kind': lambda x: f'{x}'})
                     ly = np.array2string(value[1], separator=', ', formatter={'float_kind': lambda x: f'{x}'})
@@ -270,9 +271,9 @@ class Settings:
         lines = []
         for key, value in self.__dict__.items():
             if value is not None:
-                if key == 'lattice' and not self.lattice.apply_custom_lattice:
+                if key =='general':
                     continue
-                elif key == 'lattice' and self.lattice.apply_custom_lattice:
+                elif key == 'lattice':
                     lines.append(f"\t{str(self.lattice)}")
                 elif key == 'analysis':
                     lines.append(f"\t{str(self.analysis)}")
@@ -281,7 +282,7 @@ class Settings:
                 else:
                     lines.append(f"\t|- {key}: {value}")
         output = '''
-        Global Settings:
+        General Settings:
         ----------------
 {}
         '''.format('\n'.join(lines))

@@ -1,34 +1,25 @@
 # Import necessary modules
 from nexus import SettingsBuilder, main
 import nexus.config.settings as c
-import numpy as np
 
 # Path to the trajectory file
 path = 'examples/inputs/SiO2-27216at-pos67B.xyz'
 
 # General settings
 config_general = c.GeneralSettings(
-    project_name="SiO2",
-    export_directory="examples/exports",
-    file_location=path,
-    range_of_frames=(0, 10),
-    apply_pbc=True,
-    verbose=True,
-    save_logs=True,
-    save_performance=True
+    project_name="SiO2",                    # Project name
+    export_directory="examples/exports",    # Export directory
+    file_location=path,                     # File location
+    range_of_frames=(0, 10),                # Range of frames
+    apply_pbc=True,                         # Apply periodic boundary conditions
+    verbose=True,                           # Verbose mode (if True, print title, progress bars, etc.)
+    save_logs=True,                         # Save logs    (save logs to export_directory/logs.txt)
+    save_performance=True                   # Save performance (save performance data to export_directory/performance...json)
 )
 
 # Lattice settings
 config_lattice = c.LatticeSettings(
-    apply_custom_lattice=True,                      # If False, read lattice from trajectory file
-    custom_lattice=np.array([[66.2574, 0.0, 0.0],     # Put a custom lattice here or None
-                             [0.0, 66.2574, 0.0],     # lattice values MUST be float.
-                             [0.0, 0.0, 66.2574]]), 
-    apply_lattice_to_all_frames=False,               # Apply the same lattice to all frames
-    
-    # not implemented yet
-    get_lattice_from_file=False,                    # Get lattice from file (will read from lattice.dat if True)
-    lattice_file_location="./",                     # Location of the lattice file
+    apply_custom_lattice=False,                       # If False, read lattice from trajectory file
 )
 
 # Clustering settings
@@ -51,7 +42,7 @@ config_clustering = c.ClusteringSettings(
     shared_mode="O", # "all_types" or "same_type" or "different_type" or "<node_type>"
     shared_threshold=2, # Minimum of shared neighbors
 
-    with_printed_unwrapped_clusters=True,
+    with_printed_unwrapped_clusters=False,
     print_mode="connectivity" # "all", "connectivity", "individual", "none"
 )
 

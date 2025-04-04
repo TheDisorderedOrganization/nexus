@@ -1,12 +1,14 @@
 from abc import ABC, abstractmethod
 from typing import Generator, List, Optional, TextIO
 
+from ...config.settings import Settings
 from ...core.frame import Frame
 
 class BaseReader(ABC):
-    def __init__(self) -> None:
-        self.verbose: bool = True
-        self.filename: str = ""
+    def __init__(self, settings: Settings) -> None:
+        self.verbose: bool = settings.verbose
+        self.filename: str = settings.file_location
+        self._settings: Settings = settings
         self.num_frames: int = 0
         self.frame_offsets: List[int] = [] # byte offset of each frame
         self.frame_sizes: List[int] = [] # byte size of each frame

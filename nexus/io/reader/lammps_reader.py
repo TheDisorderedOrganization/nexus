@@ -5,7 +5,7 @@ import os
 
 from .base_reader import BaseReader
 from ...core.frame import Frame
-from ...core.node import Node
+from ...config.settings import Settings
 
 FrameIndex = namedtuple('FrameIndex', ['frame_id', 'num_nodes', 'lattice', 'byte_offset'])
 
@@ -13,6 +13,8 @@ class LAMMPSReader(BaseReader):
     """
     Reader for LAMMPS trajectory files.
     """
+    def __init__(self, settings: Settings) -> None:
+        super().__init__(settings)
 
     def detect(self, filepath: str) -> bool:
         """

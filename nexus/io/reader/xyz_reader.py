@@ -2,11 +2,10 @@ from typing import List, Generator
 from collections import namedtuple
 import numpy as np
 import os
-from itertools import repeat
 
 from .base_reader import BaseReader
 from ...core.frame import Frame
-from ...core.node import Node
+from ...config.settings import Settings
 
 FrameIndex = namedtuple('FrameIndex', ['frame_id', 'num_nodes', 'lattice', 'byte_offset'])
 
@@ -14,6 +13,8 @@ class XYZReader(BaseReader):
     """
     Reader for XYZ trajectory files.
     """
+    def __init__(self, settings: Settings) -> None:
+        super().__init__(settings)
 
     def detect(self, filepath: str) -> bool:
         """
@@ -119,6 +120,9 @@ class XYZReader(BaseReader):
                     parts = node_line.split()
                     symbol = parts[0]
                     x, y, z = map(float, parts[1:])
+                    if symbol not in self._settings.clustering.node_types:
+                        continue
+                    
                     symbols.append(symbol)
                     positions.append(np.array([x, y, z]))
                 except ValueError:

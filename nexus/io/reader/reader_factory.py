@@ -2,15 +2,17 @@ from typing import Optional
 from .base_reader import BaseReader
 from .xyz_reader import XYZReader
 from .lammps_reader import LAMMPSReader
+from ...config.settings import Settings
 import os
 
 class ReaderFactory:
     """Factory for creating file readers based on file type."""
 
-    def __init__(self):
+    def __init__(self, settings: Settings) -> None:
         self._readers = {}
-        self.register_reader(XYZReader())
-        self.register_reader(LAMMPSReader())  
+        self._settings = settings
+        self.register_reader(XYZReader(settings))
+        self.register_reader(LAMMPSReader(settings))  
         # Register other readers here
 
     def register_reader(self, reader: BaseReader):
@@ -22,12 +24,12 @@ class ReaderFactory:
                 break
 
 
-    def get_reader(self, filename: str) -> Optional[BaseReader]:
+    def get_reader(self) -> Optional[BaseReader]:
         """Returns the appropriate reader for a given file."""
-        if os.path.exists(filename):
+        if os.path.exists(self._settings.file_location):
             for extension, reader in self._readers.items():
-                if reader.detect(filename):
+                if reader.detect(self._settings.file_location):
                     return reader
         else:
-            raise ValueError(f"File {filename} does not exist.")
+            raise ValueError(f"File {self._settings.file_location} does not exist.")
         return None

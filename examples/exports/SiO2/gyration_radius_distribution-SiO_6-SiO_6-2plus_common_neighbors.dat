@@ -1,18 +1,8 @@
 # Gyration Radius Results
-# Date: 2025-04-04 15:14:30.966784
-# Frames averaged: 1
-# Connectivity_type,Concentration,Cluster_size,Gyration_radius,Standard_deviation_ddof=1
-SiO_6-SiO_6-2plus_common_neighbors,0.005731922398589065,4,1.9514739665263623,0.0
-SiO_6-SiO_6-2plus_common_neighbors,0.005731922398589065,3,1.853121977716415,0.0
-SiO_6-SiO_6-2plus_common_neighbors,0.005731922398589065,2,1.2633360614365678,0.0
-# Date: 2025-04-04 15:16:15.021469
-# Date: 2025-04-04 15:17:29.881256
-# Date: 2025-04-04 15:46:21.644228
+# Date: 2025-04-04 18:29:05.281312
 # Frames averaged: 11
+# Connectivity_type,Concentration,Cluster_size,Gyration_radius,Standard_deviation_ddof=1
 SiO_6-SiO_6-2plus_common_neighbors,0.00565843621399177,5,2.9192421952343297,0.0
 SiO_6-SiO_6-2plus_common_neighbors,0.00565843621399177,4,2.0498255663938485,0.0
 SiO_6-SiO_6-2plus_common_neighbors,0.00565843621399177,3,1.7558538874396028,0.0
 SiO_6-SiO_6-2plus_common_neighbors,0.00565843621399177,2,1.2544558167307565,0.0
-# Date: 2025-04-04 15:54:32.396812
-# Date: 2025-04-04 16:47:09.344241
-# Date: 2025-04-04 16:50:52.043314

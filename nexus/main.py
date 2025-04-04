@@ -46,7 +46,7 @@ def main(settings: Settings):
 
     # Initialize reader and system
     scan_start = time.time()
-    reader = ReaderFactory().get_reader(settings.file_location)
+    reader = ReaderFactory(settings).get_reader()
     reader.set_verbose(settings.verbose)
     system = System(reader, settings)
     scan_end = time.time()
