@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Generator, List, Optional
+from typing import Generator, List, Optional, TextIO
 
 from ...core.frame import Frame
 
@@ -16,18 +16,18 @@ class BaseReader(ABC):
     def set_verbose(self, verbose: bool) -> None:
         self.verbose = verbose
 
-    def seek_to_line(self, offset: int) -> None:
+    def seek_to_line(self, file_handle: TextIO, offset: int) -> None:
         """
-        Seeks to the specified frame.
+        Seeks to the specified line in an already opened file.
 
         Args:
-            offset (int): The byte offset to seek to.
+            file_handle: The open file handle
+        offset (int): The line offset to seek to.
         """
-        with open(self.filename, 'r') as f:
-            while offset > 0:
-                f.readline()
-                offset -= 1
-            return f.tell()
+        file_handle.seek(0)  # Reset to beginning of file
+        for _ in range(offset):
+            file_handle.readline()
+        return
 
     @abstractmethod
     def detect(self, filepath: str) -> bool:

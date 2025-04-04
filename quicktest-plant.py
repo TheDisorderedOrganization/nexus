@@ -1,6 +1,7 @@
 # Import necessary modules
 from nexus import SettingsBuilder, main
 import nexus.config.settings as c
+import nexus.io.parser.parser as p
 import numpy as np
 
 # Lattice settings
@@ -15,6 +16,8 @@ config_clustering = c.ClusteringSettings(
     node_masses=[1.0],
     connectivity=["1", "1"],
     cutoffs=[c.Cutoff(type1="1", type2="1", distance=1.1)], # cutoff distance in reduced units
+    # with_printed_unwrapped_clusters=True,
+    # print_mode="all", # "all", "connectivity", "individual", "none"
 )
 
 # Analysis settings
@@ -23,21 +26,37 @@ config_analysis = c.AnalysisSettings(
 )
 
 # Path to the trajectory file
-path = 'examples/inputs/plant/20200606.xyz'
+rootdir = './examples/inputs/plant/'
+parser = p.Parser(file_location=rootdir, format='xyz')
+files = parser.get_files()
+infos = parser.get_infos()
 
-# Settings builder
-settings = (SettingsBuilder() \
-    .with_project_name('plan')          # Name of the project \
-    .with_export_directory('examples/exports')    # Directory to export results \
-    .with_file_location(path)           # Path to the trajectory file \
-    .with_range_of_frames(0, 0)        # Range of frames to process (0 to -1 = all frames) \
-    .with_apply_pbc(False)              # Whether to apply periodic boundary conditions (True = apply) \
-    .with_verbose(True)                 # Whether to print settings, progress bars and other information (True = print) \
-    .with_lattice(config_lattice)       # Lattice settings \
-    .with_clustering(config_clustering) # Clustering settings \
-    .with_analysis(config_analysis)     # Analysis settings \
-    .build()                            # Don't forget to build the settings object
-)
+for i, file in enumerate(files):
+    path = file
+    project_name = infos['project_name'][i]
+    config_general = c.GeneralSettings(
+        project_name=project_name,
+        export_directory='examples/exports/plant',
+        file_location=path,
+        range_of_frames=(0, 0),
+        apply_pbc=False,
+        verbose=True,
+        save_logs=True,
+        save_performance=True
+    )
+    # Settings builder
+    settings = (SettingsBuilder() \
+        .with_general(config_general)               # General settings \
+        .with_lattice(config_lattice)               # Lattice settings \
+        .with_clustering(config_clustering)         # Clustering settings \
+        .with_analysis(config_analysis)             # Analysis settings \
+        .build()                                    # Don't forget to build the settings object
+    )
 
-# Run the main function to process the trajectory
-main(settings) 
+    # Run the main function to process the trajectory
+    # main(settings)
+
+from nexus.io.writer.writer_factory import WriterFactory
+writer_factory = WriterFactory(settings)
+writer = writer_factory.get_writer("MultipleFilesSummaryWriter", mode="connectivity")
+writer.write()

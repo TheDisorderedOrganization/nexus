@@ -48,7 +48,35 @@ def print_title(__version__) -> None:
     print(f"__version__ \u279c  {__version__}\n")
     return
 
+def print_title_to_file(__version__, path) -> None:
+    """
+    Prints the title and the version of the package.
 
+    Parameters:
+    -----------
+        __version__ (str): The version of the package.
+
+    Returns:
+    --------
+        None
+    """
+    title = r"""
+                                                                
+    :-:      --:   -=+++=-  -:     ==: ::       :-:    :+*##*=: 
+   *@@%#-   +@@# -%@@@@@@@=*@%*: :#@@+=@@+     -@@%:  =@@@@@@@+ 
+  -@@@@@@+  #@@%:%@@%+==== -%@@@#%@@#:+@@#     =@@@-  %@@%--=-  
+  =@@@@@@@= #@@#-@@@%+=-    :*@@@@@+  +@@%:    +@@@-  +@@@@%#*: 
+  =@@@=#@@@#@@@+=@@@@@@*      #@@@#   =@@@=    *@@%:   -+#%@@@%-
+  =@@% :%@@@@@@==@@@*--     :*@@@@@#: :%@@@*==*@@@+ -##+  :#@@@+
+  =@@%  -%@@@@# :@@@#*###*:-%@@@#%@@@- -%@@@@@@@@*  *@@@#*#@@@@-
+  -%%+   :+##+:  =%@@@@@@%:=@@%- :#%%-  :+#%%%%*-   :%@@@@@@@#= 
+    :              :-----:  :-     :       :::        -=+++=:   
+    """
+    with open(path, 'w') as f:
+        f.write(title)
+        f.write("\n")
+        f.write(f"__version__ \u279c  {__version__}\n")
+    return
 
 def generate_color_gradient(num_iterations):
     """ Generate a gradient of colors to update at each tqdm iteration """

@@ -1,0 +1,64 @@
+
+                                                                
+    :-:      --:   -=+++=-  -:     ==: ::       :-:    :+*##*=: 
+   *@@%#-   +@@# -%@@@@@@@=*@%*: :#@@+=@@+     -@@%:  =@@@@@@@+ 
+  -@@@@@@+  #@@%:%@@%+==== -%@@@#%@@#:+@@#     =@@@-  %@@%--=-  
+  =@@@@@@@= #@@#-@@@%+=-    :*@@@@@+  +@@%:    +@@@-  +@@@@%#*: 
+  =@@@=#@@@#@@@+=@@@@@@*      #@@@#   =@@@=    *@@%:   -+#%@@@%-
+  =@@% :%@@@@@@==@@@*--     :*@@@@@#: :%@@@*==*@@@+ -##+  :#@@@+
+  =@@%  -%@@@@# :@@@#*###*:-%@@@#%@@@- -%@@@@@@@@*  *@@@#*#@@@@-
+  -%%+   :+##+:  =%@@@@@@%:=@@%- :#%%-  :+#%%%%*-   :%@@@@@@@#= 
+    :              :-----:  :-     :       :::        -=+++=:   
+    
+__version__ ➜  0.0.1
+
+
+        Global Settings:
+        ----------------
+	|- project_name: SiO2
+	|- export_directory: examples/exports/SiO2
+	|- file_location: examples/inputs/SiO2-27216at-pos67B.xyz
+	|- range_of_frames: (0, 10)
+	|- apply_pbc: True
+	|- verbose: True
+	|- save_logs: True
+	|- save_performance: True
+	|- general: GeneralSettings(project_name='Project', export_directory='exports', file_location='', range_of_frames=(0, -1), apply_pbc=False, verbose=False, save_logs=False, save_performance=False)
+	
+
+        Lattice Settings:
+        -----------------
+		|- apply_custom_lattice: True
+		|- custom_lattice:
+			lx = [66.2574, 0.0, 0.0]
+			ly = [0.0, 66.2574, 0.0]
+			lz = [0.0, 0.0, 66.2574]
+		|- get_lattice_from_file: False
+		|- lattice_file_location: ./
+		|- apply_lattice_to_all_frames: False
+        
+	
+        Clustering Settings:
+        -----------------
+		|- criteria: bond
+		|- node_types: ['Si', 'O']
+		|- node_masses: [28.0855, 15.9994]
+		|- connectivity: ['Si', 'O', 'Si']
+		|- cutoffs:
+			Si-Si : distance = 3.5
+			Si-O  : distance = 2.3
+			O-O   : distance = 3.05
+		|- with_printed_unwrapped_clusters: True
+		|- print_mode: connectivity
+		|- with_coordination_number: True
+		|- coordination_mode: O
+		|- coordination_range: [4, 6]
+		|- with_alternating: True
+        
+	
+        Analysis Settings:
+        -----------------
+		|- overwrite: True
+		|- with_all: True
+        
+        

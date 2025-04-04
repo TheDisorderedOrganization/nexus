@@ -168,6 +168,7 @@ class SharedBasedFinder(BaseFinder):
             root_2.parent = root_1
 
     def get_connectivities(self) -> List[str]:
+        cn = self._settings.clustering.shared_threshold
         if self._settings.clustering.criteria == 'bond':
             type1 = self._settings.clustering.connectivity[0]
             type2 = self._settings.clustering.connectivity[1]
@@ -177,11 +178,11 @@ class SharedBasedFinder(BaseFinder):
             if self._settings.clustering.with_alternating:
                 connectivities = []
                 for i in range(coordination_range[0], coordination_range[1] + 1):
-                    connectivities.append(f"{type1}{type2}_{i}-{type3}{type2}_{i}")
+                    connectivities.append(f"{type1}{type2}_{i}-{type3}{type2}_{i}-{cn}plus_common_neighbors")
                     if i+1 <= coordination_range[1]:
-                        connectivities.append(f"{type3}{type2}_{i}-{type1}{type2}_{i+1}")
+                        connectivities.append(f"{type3}{type2}_{i}-{type1}{type2}_{i+1}-{cn}plus_common_neighbors")
             else:
-                connectivities = [f"{type1}{type2}_{i}-{type3}{type2}_{i}" for i in range(coordination_range[0], coordination_range[1] + 1)]
+                connectivities = [f"{type1}{type2}_{i}-{type3}{type2}_{i}-{cn}plus_common_neighbors" for i in range(coordination_range[0], coordination_range[1] + 1)]
         else:
             type1 = self._settings.clustering.connectivity[0]
             type2 = self._settings.clustering.connectivity[1]
@@ -190,13 +191,13 @@ class SharedBasedFinder(BaseFinder):
             if self._settings.clustering.with_alternating:
                 connectivities = []
                 for i in range(coordination_range[0], coordination_range[1] + 1):
-                    connectivities.append(f"{type1}_{i}-{type2}_{i}")
+                    connectivities.append(f"{type1}_{i}-{type2}_{i}-{cn}plus_common_neighbors")
                     if i+1 <= coordination_range[1]:
-                        connectivities.append(f"{type2}_{i}-{type1}_{i+1}")
+                        connectivities.append(f"{type2}_{i}-{type1}_{i+1}-{cn}plus_common_neighbors")
             else:
                 connectivities = []
                 for i in range(coordination_range[0], coordination_range[1] + 1):
-                    connectivities.append(f"{type1}_{i}-{type2}_{i}")
+                    connectivities.append(f"{type1}_{i}-{type2}_{i}-{cn}plus_common_neighbors")
 
         return connectivities
 
@@ -213,7 +214,7 @@ class SharedBasedFinder(BaseFinder):
         
         # 3 - generate clusters based on connectivities
         for connectivity in connectivities:
-            z1, z2 = connectivity.split('-')
+            z1, z2, dump = connectivity.split('-')
             z1 = int(z1.split('_')[1])
             z2 = int(z2.split('_')[1])
             self._find_cluster(networking_nodes, connectivity, z1, z2)

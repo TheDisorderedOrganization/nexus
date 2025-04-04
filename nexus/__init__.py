@@ -22,8 +22,5 @@ from .config.settings import Settings, SettingsBuilder, AnalysisSettings
 # Import main function
 from .main import main
 
-from .utils import print_title
-
-__version__ = "0.0.1"
-
-print_title(__version__)
+# Import version
+from .version import __version__

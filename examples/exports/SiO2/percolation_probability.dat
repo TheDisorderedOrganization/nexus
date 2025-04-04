@@ -1,0 +1,11 @@
+# Percolation Probability Results
+# Date: 2025-04-04 16:50:16.841545
+# Frames averaged: 11
+# Connectivity_type,Concentration,Percolation_probability,Standard_deviation_ddof=1
+SiO_4-SiO_4,0.23162845385067607,1.0,0.0
+SiO_4-SiO_5,0.2456275720164609,1.0,0.0
+SiO_5-SiO_5,0.08061434450323339,0.0,0.0
+SiO_5-SiO_6,0.04254850088183421,0.0,0.0
+SiO_6-SiO_6,0.007275132275132275,0.0,0.0
+# Date: 2025-04-04 16:50:52.043691
+SiO_6-SiO_6-2plus_common_neighbors,0.00565843621399177,0.0,0.0

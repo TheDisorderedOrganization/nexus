@@ -1,0 +1,45 @@
+
+                                                                
+    :-:      --:   -=+++=-  -:     ==: ::       :-:    :+*##*=: 
+   *@@%#-   +@@# -%@@@@@@@=*@%*: :#@@+=@@+     -@@%:  =@@@@@@@+ 
+  -@@@@@@+  #@@%:%@@%+==== -%@@@#%@@#:+@@#     =@@@-  %@@%--=-  
+  =@@@@@@@= #@@#-@@@%+=-    :*@@@@@+  +@@%:    +@@@-  +@@@@%#*: 
+  =@@@=#@@@#@@@+=@@@@@@*      #@@@#   =@@@=    *@@%:   -+#%@@@%-
+  =@@% :%@@@@@@==@@@*--     :*@@@@@#: :%@@@*==*@@@+ -##+  :#@@@+
+  =@@%  -%@@@@# :@@@#*###*:-%@@@#%@@@- -%@@@@@@@@*  *@@@#*#@@@@-
+  -%%+   :+##+:  =%@@@@@@%:=@@%- :#%%-  :+#%%%%*-   :%@@@@@@@#= 
+    :              :-----:  :-     :       :::        -=+++=:   
+    
+__version__ ➜  0.0.1
+
+
+        Global Settings:
+        ----------------
+	|- project_name: ordinary_percolation-1.000
+	|- export_directory: examples/exports/ordinary_percolation/ordinary_percolation-1.000
+	|- file_location: ./examples/inputs/ordinary_percolation/percolation_sites_1.000.xyz
+	|- range_of_frames: (0, 0)
+	|- apply_pbc: True
+	|- verbose: True
+	|- save_logs: True
+	|- save_performance: False
+	|- general: GeneralSettings(project_name='Project', export_directory='exports', file_location='', range_of_frames=(0, -1), apply_pbc=False, verbose=False, save_logs=False, save_performance=False)
+	
+        Clustering Settings:
+        -----------------
+		|- criteria: distance
+		|- node_types: ['1']
+		|- node_masses: [1.0]
+		|- connectivity: ['1', '1']
+		|- cutoffs:
+			1-1   : distance = 1.1
+		|- with_printed_unwrapped_clusters: False
+		|- print_mode: none
+        
+	
+        Analysis Settings:
+        -----------------
+		|- overwrite: True
+		|- with_all: True
+        
+        

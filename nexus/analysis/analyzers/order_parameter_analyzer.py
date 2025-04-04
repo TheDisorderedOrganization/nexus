@@ -6,6 +6,8 @@ from ...utils.aesthetics import remove_duplicate_lines
 
 import numpy as np
 import os 
+from datetime import datetime
+
 
 class OrderParameterAnalyzer(BaseAnalyzer):
     def __init__(self, settings: Settings) -> None:
@@ -40,6 +42,8 @@ class OrderParameterAnalyzer(BaseAnalyzer):
                 self.order_parameters[connectivity].extend([[0.0, 0.0, 0.0]])
                 self.std[connectivity] = [0.0, 0.0, 0.0]
                 self.concentrations[connectivity] = concentrations[connectivity]
+
+        self.update_frame_processed(frame)
 
     def finalize(self) -> None:
         for connectivity, order_parameters in self.order_parameters.items():
@@ -85,13 +89,17 @@ class OrderParameterAnalyzer(BaseAnalyzer):
         overwrite = self._settings.analysis.overwrite
         if not overwrite and os.path.exists(path):
             with open(path, 'a', encoding='utf-8') as output:
-                output.write(f"# Order parameter \u279c {number_of_frames} frames averaged.\n")
-                output.write("# Concentration \u279c Order parameter +/- Error # Connectivity\n")
+                output.write(f"# Order Parameter Results\n")
+                output.write(f"# Date: {datetime.now()}\n")
+                output.write(f"# Frames averaged: {number_of_frames}\n")
+                output.write("# Connectivity_type,Concentration,Order_parameter,Standard_deviation_ddof=1\n")
             output.close()
         else:
             with open(path, 'w', encoding='utf-8') as output:
-                output.write(f"# Order parameter \u279c {number_of_frames} frames averaged.\n")
-                output.write("# Concentration \u279c Order parameter +/- Error # Connectivity\n")
+                output.write(f"# Order Parameter Results\n")
+                output.write(f"# Date: {datetime.now()}\n")
+                output.write(f"# Frames averaged: {number_of_frames}\n")
+                output.write("# Connectivity_type,Concentration,Order_parameter,Standard_deviation_ddof=1\n")
             output.close()
 
     def _write_data(self) -> None:
@@ -102,7 +110,7 @@ class OrderParameterAnalyzer(BaseAnalyzer):
                 concentration = output["concentrations"][connectivity]
                 order_parameter = output["order_parameters"][connectivity]
                 std = output["std"][connectivity]
-                f.write(f"{concentration:10.6f} \u279c {order_parameter[0]:10.6f} +/- {std[0]:<10.5f} # {connectivity}\n")
+                f.write(f"{connectivity},{concentration},{order_parameter[0]},{std[0]}\n")
         remove_duplicate_lines(path)
 
     def __str__(self) -> str:

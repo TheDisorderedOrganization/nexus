@@ -2,6 +2,7 @@ from typing import List, Generator
 from collections import namedtuple
 import numpy as np
 import os
+from itertools import repeat
 
 from .base_reader import BaseReader
 from ...core.frame import Frame
@@ -101,7 +102,7 @@ class XYZReader(BaseReader):
         
         frame_index = self.frame_indices[frame_id]
         with open(self.filename, 'r') as f:
-            self.seek_to_line(frame_index.byte_offset) 
+            self.seek_to_line(f, frame_index.byte_offset) 
             num_nodes = frame_index.num_nodes
             lattice = frame_index.lattice
 

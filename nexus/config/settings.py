@@ -7,6 +7,22 @@ from nexus.core import cluster
 
 
 @dataclass
+class GeneralSettings:
+    """
+    General settings that contains all the general settings.
+    
+    Attributes:
+    """
+    project_name: str = "Project" # Name of the project
+    export_directory: str = "exports" # Directory to export results
+    file_location: str = "" # Path to the trajectory file
+    range_of_frames: Tuple[int, int] = (0, -1) # Range of frames to process (0 to -1 = all frames)
+    apply_pbc: bool = False # Whether to apply periodic boundary conditions
+    verbose: bool = False # Whether to print settings, progress bars and other information
+    save_logs: bool = False # Whether to save logs
+    save_performance: bool = False # Whether to save performance
+
+@dataclass
 class Cutoff:
     """
     Cutoff that contains all the cutoffs.
@@ -230,6 +246,9 @@ class Settings:
     range_of_frames: Tuple[int, int] = (0, -1)
     apply_pbc: bool = True
     verbose: bool = False
+    save_logs: bool = False
+    save_performance: bool = False
+    general: GeneralSettings = field(default_factory=GeneralSettings)
     lattice: LatticeSettings = field(default_factory=LatticeSettings)
     clustering: ClusteringSettings = field(default_factory=ClusteringSettings)
     analysis: AnalysisSettings = field(default_factory=AnalysisSettings)
@@ -272,39 +291,49 @@ class SettingsBuilder:
     def __init__(self):
         self._settings = Settings()  # Start with default settings
 
-    def with_project_name(self, name: str):
-        self._settings.project_name = name
-        return self
-
-    def with_export_directory(self, directory: str):
-        self._settings.export_directory = directory
-        return self
-
-    def with_file_location(self, location: str):
-        self._settings.file_location = location
-        return self
-
-    def with_range_of_frames(self, start: int, end: Optional[int] = None):
-        self._settings.set_range_of_frames(start, end)
-        return self
-    
-    def with_apply_pbc(self, apply_pbc: bool):
-        self._settings.apply_pbc = apply_pbc
-        return self
-
     def with_lattice(self, lattice: LatticeSettings):
+        if not isinstance(lattice, LatticeSettings):
+            raise ValueError(f"Invalid lattice settings: {lattice}")
         self._settings.lattice = lattice
         return self
 
-    def with_verbose(self, verbose: bool):
-        self._settings.verbose = verbose
+    def with_general(self, general: GeneralSettings):
+        if not isinstance(general, GeneralSettings):
+            raise ValueError(f"Invalid general settings: {general}")
+        if not general.project_name:
+            raise ValueError(f"Invalid project name: {general.project_name}")
+        if not general.export_directory:
+            raise ValueError(f"Invalid export directory: {general.export_directory}")
+        if not general.file_location:
+            raise ValueError(f"Invalid file location: {general.file_location}")
+        if not general.range_of_frames:
+            raise ValueError(f"Invalid range of frames: {general.range_of_frames}")
+        if general.apply_pbc is None:
+            raise ValueError(f"Invalid apply pbc: {general.apply_pbc}")
+
+        self._settings.project_name = general.project_name
+        self._settings.export_directory = general.export_directory
+        self._settings.file_location = general.file_location
+        self._settings.range_of_frames = general.range_of_frames
+        self._settings.apply_pbc = general.apply_pbc
+        if general.verbose is not None:
+            self._settings.verbose = general.verbose
+        if general.save_logs is not None:
+            self._settings.save_logs = general.save_logs
+        if general.save_performance is not None:
+            self._settings.save_performance = general.save_performance
         return self
 
     def with_analysis(self, analysis: AnalysisSettings):
+        if not isinstance(analysis, AnalysisSettings):
+            raise ValueError(f"Invalid analysis settings: {analysis}")
         self._settings.analysis = analysis
         return self
 
     def with_clustering(self, clustering: ClusteringSettings):
+        if not isinstance(clustering, ClusteringSettings):
+            raise ValueError(f"Invalid clustering settings: {clustering}")
+            
         if clustering.criteria not in ['bond', 'distance']:
             raise ValueError(f"Invalid criteria: {clustering.criteria}")
 

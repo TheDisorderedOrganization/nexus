@@ -1,0 +1,7 @@
+# Gyration Radius Results
+# Date: 2025-04-04 16:50:16.839973
+# Frames averaged: 11
+# Connectivity_type,Concentration,Cluster_size,Gyration_radius,Standard_deviation_ddof=1
+SiO_4-SiO_4,0.23162845385067607,4,2.381615051309965,0.0
+SiO_4-SiO_4,0.23162845385067607,3,2.1763313427411934,0.0
+SiO_4-SiO_4,0.23162845385067607,2,1.439540646945819,0.0

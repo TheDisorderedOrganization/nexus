@@ -10,7 +10,8 @@ class ClustersWriter(BaseWriter):
         self._settings: Settings = settings
 
     def set_clusters(self, clusters: List[Cluster]) -> None:
-        self._clusters: List[Cluster] = clusters
+        # Sort clusters by size
+        self._clusters: List[Cluster] = sorted(clusters, key=lambda cluster: cluster.size, reverse=True)
     
     def write(self) -> None:
         # check options

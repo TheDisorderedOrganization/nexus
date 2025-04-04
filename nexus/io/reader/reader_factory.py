@@ -2,7 +2,7 @@ from typing import Optional
 from .base_reader import BaseReader
 from .xyz_reader import XYZReader
 from .lammps_reader import LAMMPSReader
-
+import os
 
 class ReaderFactory:
     """Factory for creating file readers based on file type."""
@@ -24,7 +24,10 @@ class ReaderFactory:
 
     def get_reader(self, filename: str) -> Optional[BaseReader]:
         """Returns the appropriate reader for a given file."""
-        for extension, reader in self._readers.items():
-            if reader.detect(filename):
-                return reader
+        if os.path.exists(filename):
+            for extension, reader in self._readers.items():
+                if reader.detect(filename):
+                    return reader
+        else:
+            raise ValueError(f"File {filename} does not exist.")
         return None

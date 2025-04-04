@@ -7,6 +7,7 @@ from ...utils.aesthetics import remove_duplicate_lines
 
 import numpy as np
 import os
+from datetime import datetime
 
 
 class LargestClusterSizeAnalyzer(BaseAnalyzer):
@@ -93,13 +94,17 @@ class LargestClusterSizeAnalyzer(BaseAnalyzer):
         overwrite = self._settings.analysis.overwrite
         if not overwrite and os.path.exists(path):
             with open(path, 'a', encoding='utf-8') as output:
-                output.write(f"# Largest cluster size \u279c {number_of_frames} frames averaged.\n")
-                output.write("# Concentration \u279c Largest cluster size +/- Error # Connectivity\n")
+                output.write(f"# Largest Cluster Size Results\n")
+                output.write(f"# Date: {datetime.now()}\n")
+                output.write(f"# Frames averaged: {number_of_frames}\n")
+                output.write("# Connectivity_type,Concentration,Largest_cluster_size,Standard_deviation_ddof=1\n")
             output.close()
         else:
             with open(path, 'w', encoding='utf-8') as output:
-                output.write(f"# Largest cluster size \u279c {number_of_frames} frames averaged.\n")
-                output.write("# Concentration \u279c Largest cluster size +/- Error # Connectivity\n")
+                output.write(f"# Largest Cluster Size Results\n")
+                output.write(f"# Date: {datetime.now()}\n")
+                output.write(f"# Frames averaged: {number_of_frames}\n")
+                output.write("# Connectivity_type,Concentration,Largest_cluster_size,Standard_deviation_ddof=1\n")
             output.close()
 
     def _write_data(self) -> None:
@@ -110,7 +115,7 @@ class LargestClusterSizeAnalyzer(BaseAnalyzer):
                 concentration = output["concentrations"][connectivity]
                 largest_cluster_size = output["largest_cluster_size"][connectivity]
                 std = output["std"][connectivity]
-                f.write(f"{concentration:10.6f} \u279c {largest_cluster_size:10.6f} +/- {std:<10.5f} # {connectivity}\n")
+                f.write(f"{connectivity},{concentration},{largest_cluster_size},{std}\n")
         remove_duplicate_lines(path)
 
     def __str__(self) -> str:

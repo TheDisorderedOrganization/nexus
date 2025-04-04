@@ -7,7 +7,7 @@ from ...utils.aesthetics import remove_duplicate_lines
 
 import numpy as np
 import os
-
+from datetime import datetime
 
 class AverageClusterSizeAnalyzer(BaseAnalyzer):
     def __init__(self, settings: Settings) -> None:
@@ -78,7 +78,6 @@ class AverageClusterSizeAnalyzer(BaseAnalyzer):
     def print_to_file(self) -> None:
         self._write_header()
         self._write_data()
-        
 
     def get_std(self) -> Dict[str, float]:
         return self.std
@@ -98,13 +97,17 @@ class AverageClusterSizeAnalyzer(BaseAnalyzer):
         overwrite = self._settings.analysis.overwrite
         if not overwrite and os.path.exists(path):
             with open(path, 'a', encoding='utf-8') as output:
-                output.write(f"# Average cluster size \u279c {number_of_frames} frames averaged.\n")
-                output.write("# Concentration \u279c Average cluster size +/- Error # Connectivity\n")
+                output.write(f"# Average Cluster Size Results\n")
+                output.write(f"# Date: {datetime.now()}\n")
+                output.write(f"# Frames averaged: {number_of_frames}\n")
+                output.write("# Connectivity_type,Concentration,Average_cluster_size,Standard_deviation_ddof=1\n")
             output.close()
         else:
             with open(path, 'w', encoding='utf-8') as output:
-                output.write(f"# Average cluster size \u279c {number_of_frames} frames averaged.\n")
-                output.write("# Concentration \u279c Average cluster size +/- Error # Connectivity\n")
+                output.write(f"# Average Cluster Size Results\n")
+                output.write(f"# Date: {datetime.now()}\n")
+                output.write(f"# Frames averaged: {number_of_frames}\n")
+                output.write("# Connectivity_type,Concentration,Average_cluster_size,Standard_deviation_ddof=1\n")
             output.close()
 
     def _write_data(self) -> None:
@@ -115,7 +118,7 @@ class AverageClusterSizeAnalyzer(BaseAnalyzer):
                 concentration = output["concentrations"][connectivity]
                 average_size = output["average_cluster_size"][connectivity]
                 std = output["std"][connectivity]
-                f.write(f"{concentration:10.6f} \u279c {average_size:10.6f} +/- {std:<10.5f} # {connectivity}\n")
+                f.write(f"{connectivity},{concentration},{average_size},{std}\n")
         remove_duplicate_lines(path)
 
     def __str__(self) -> str:

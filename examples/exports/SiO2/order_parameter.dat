@@ -1,7 +1,11 @@
-# Order parameter ➜ 0 frames averaged.
-# Concentration ➜ Order parameter +/- Error # Connectivity
-  0.232621 ➜   0.996683 +/- 0.00000    # SiO_4-SiO_4
-  0.244415 ➜   0.898827 +/- 0.00000    # SiO_4-SiO_5
-  0.079108 ➜   0.000000 +/- 0.00000    # SiO_5-SiO_5
-  0.042328 ➜   0.000000 +/- 0.00000    # SiO_5-SiO_6
-  0.007165 ➜   0.000000 +/- 0.00000    # SiO_6-SiO_6
+# Order Parameter Results
+# Date: 2025-04-04 16:50:16.842052
+# Frames averaged: 11
+# Connectivity_type,Concentration,Order_parameter,Standard_deviation_ddof=1
+SiO_4-SiO_4,0.23162845385067607,0.9962598318826867,0.0003330807560648741
+SiO_4-SiO_5,0.2456275720164609,0.910879925006787,0.006722752329875738
+SiO_5-SiO_5,0.08061434450323339,0.0,0.0
+SiO_5-SiO_6,0.04254850088183421,0.0,0.0
+SiO_6-SiO_6,0.007275132275132275,0.0,0.0
+# Date: 2025-04-04 16:50:52.043925
+SiO_6-SiO_6-2plus_common_neighbors,0.00565843621399177,0.0,0.0

@@ -22,11 +22,7 @@ config_clustering = c.ClusteringSettings(
 
 # Analysis settings
 config_analysis = c.AnalysisSettings(
-    with_all=False,
-    with_average_cluster_size=True,
-    with_spanning_cluster_size=True,
-    with_largest_cluster_size=True,
-    with_order_parameter=True,
+    with_all=True,
 )
 
 # Path to the trajectory file
@@ -38,25 +34,28 @@ infos = parser.get_infos()
 for i, file in enumerate(files):
     path = file
     project_name = infos['project_name'][i]
+    config_general = c.GeneralSettings(
+        project_name=project_name,
+        export_directory='examples/exports/ordinary_percolation',
+        file_location=path,
+        range_of_frames=(0, 0),
+        apply_pbc=True,
+        verbose=True,
+        save_logs=True
+    )
     # Settings builder
     settings = (SettingsBuilder() \
-        .with_project_name(project_name)            # Name of the project \
-        .with_export_directory('examples/exports')  # Directory to export results \
-        .with_file_location(path)                   # Path to the trajectory file \
-        .with_range_of_frames(0, 0)                 # Range of frames to process (0 to -1 = all frames) \
-        .with_apply_pbc(True)                       # Whether to apply periodic boundary conditions (True = apply) \
-        .with_verbose(True)                         # Whether to print settings, progress bars and other information (True = print) \
+        .with_general(config_general)               # General settings \
         .with_lattice(config_lattice)               # Lattice settings \
         .with_clustering(config_clustering)         # Clustering settings \
         .with_analysis(config_analysis)             # Analysis settings \
         .build()                                    # Don't forget to build the settings object
     )
 
-    if file == './examples/inputs/ordinary_percolation/percolation_sites_0.300.xyz':
-        main(settings)
-
-    if file == './examples/inputs/ordinary_percolation/percolation_sites_0.025.xyz':
-        main(settings)
-
     # Run the main function to process the trajectory
-    # main(settings)
+    main(settings)
+
+from nexus.io.writer.writer_factory import WriterFactory
+writer_factory = WriterFactory(settings)
+writer = writer_factory.get_writer("MultipleFilesSummaryWriter", mode="connectivity")
+writer.write()

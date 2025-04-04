@@ -1,0 +1,64 @@
+{
+  "id": "1c8fb1f1-72d5-44fa-8c10-4c2665a85320",
+  "name": " run_2020-03-13_20250404_171117",
+  "timestamp": "2025-04-04T17:11:17.754064",
+  "execution_time_ms": 113.74783515930176,
+  "memory_usage_mb": 163.04296875,
+  "cpu_usage_percent": 0.0,
+  "metrics": {
+    "scan_trajectory_time_ms": 0.10752677917480469,
+    "frame_number": 0,
+    "neighbor_finding_time_ms": 17.868995666503906,
+    "cluster_finding_time_ms": 84.49149131774902,
+    "analysis_time_ms": 0.7131099700927734,
+    "total_frames_processed": 1,
+    "memory_increase_mb": 0.125,
+    "avg_frame_time_ms": 104.19106483459473,
+    "avg_neighbor_time_ms": 17.868995666503906,
+    "avg_cluster_time_ms": 84.49149131774902,
+    "avg_analysis_time_ms": 0.7131099700927734
+  },
+  "history": [
+    {
+      "timestamp": "2025-04-04T17:11:17.754422",
+      "execution_time_ms": null,
+      "memory_usage_mb": null,
+      "cpu_usage_percent": null,
+      "metrics": {
+        "scan_trajectory_time_ms": 0.10752677917480469
+      }
+    },
+    {
+      "timestamp": "2025-04-04T17:11:17.859493",
+      "execution_time_ms": 104.19106483459473,
+      "memory_usage_mb": 163.04296875,
+      "cpu_usage_percent": 0.0,
+      "metrics": {
+        "scan_trajectory_time_ms": 0.10752677917480469,
+        "frame_number": 0,
+        "neighbor_finding_time_ms": 17.868995666503906,
+        "cluster_finding_time_ms": 84.49149131774902,
+        "analysis_time_ms": 0.7131099700927734
+      }
+    },
+    {
+      "timestamp": "2025-04-04T17:11:17.867917",
+      "execution_time_ms": 113.74783515930176,
+      "memory_usage_mb": 163.04296875,
+      "cpu_usage_percent": 0.0,
+      "metrics": {
+        "scan_trajectory_time_ms": 0.10752677917480469,
+        "frame_number": 0,
+        "neighbor_finding_time_ms": 17.868995666503906,
+        "cluster_finding_time_ms": 84.49149131774902,
+        "analysis_time_ms": 0.7131099700927734,
+        "total_frames_processed": 1,
+        "memory_increase_mb": 0.125,
+        "avg_frame_time_ms": 104.19106483459473,
+        "avg_neighbor_time_ms": 17.868995666503906,
+        "avg_cluster_time_ms": 84.49149131774902,
+        "avg_analysis_time_ms": 0.7131099700927734
+      }
+    }
+  ]
+}
