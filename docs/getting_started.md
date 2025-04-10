@@ -7,9 +7,9 @@ This section will guide you through the initial setup and usage of Nexus-CAT.
 
 ### Quick Start Example
 
-1. Prepare a trajectory file in the `Extended XYZ` format.
+1. Prepare a trajectory file in the `Extended XYZ` format, or use the example file provided at `examples/inputs/SiO2-27216at-pos67B.xyz`.
     
-    For now, the trajectory file must have the following format:
+    The trajectory file must have the following format:
 
     ```plaintext
     1008 # Number of atoms
@@ -24,86 +24,123 @@ This section will guide you through the initial setup and usage of Nexus-CAT.
 
     Nexus-CAT reads lattice properties directly from the trajectory file.
 
-    (Next versions of Nexus-CAT will handle trajectory file format automatically)
-
-2. Create a python script and import nexus 
+2. Create a python script and import the necessary modules
 
     ```python
-    import nexus
+    # Import necessary modules
+    from nexus import SettingsBuilder, main
+    import nexus.config.settings as c
     ```
 
-3. Initialize the settings using the extention `SiOz`.
-
-    The core of the program of Nexus-CAT works alongside extensions. 
-    They contain the necessary settings and functions to analyze the trajectory file.
-    The `SiOz` extension is used to analyze SiO2 systems with z being the coordination number of Si atoms.
-    (Refer to the [extensions](extensions.rst) section for more information).
+3. Set up the general configuration settings
 
     ```python
-    # Initialize the settings object
-    extension = "SiOz"
-    settings = nexus.settings.Settings(extension)
-    ```
-
-4. Set up the input/output and structure settings
-    ```python
-    # Set the trajectory file
-    settings.project_name.set_value("quick_start") 
-    settings.export_directory.set_value("./export")
-
-    # Load the trajectory file
-    trajectory = "./path/to/trajectory.xyz"         # path of trajectory file
-    settings.path_to_xyz_file.set_value(trajectory) # set the path to the trajectory file
-    settings.number_of_atoms.set_value(100)         # set the number of atoms in the trajectory file
-    settings.header.set_value(2)                    # set the number of header lines in the trajectory file
-    settings.range_of_frames.set_value([0, 1])      # set the range of frames to be analyzed \[start, end\]
-
-    # Set structure informations
-    settings.structure.set_value([
-        {"element": "Si", "number": 336},
-        {"element": "O", "number": 672},     # each element can be added separately
-    ])
-    ```
-
-5. Set up the cluster settings
-
-    In this example, we will set the cluster analysis criteria to `bond`, the connectivities to look for to `['Si', 'O', 'Si']`, and the polyhedra to look for to `[[4, 4], [5, 5], [6, 6]]`.
-    Which means we are looking for SiO$_4$-SiO$_4$, SiO$_5$-SiO$_5$, and SiO$_6$-SiO$_6$ clusters where the connectivities between SiO$_z$ polyhedra are bridges formed by the Si-O-Si bonds.
-
-    ```python
-    # Set cluster analysis criteria (bond or distance)
-    settings.cluster_settings.set_cluster_parameter(
-        'criteria', 'bond'
-    )
-    # Set cluster connectivities to look for
-    settings.cluster_settings.set_cluster_parameter(
-        'connectivity', ['Si', 'O', 'Si']
-    )
-    # Set polyhedra to look for
-    settings.cluster_settings.set_cluster_parameter(
-        'polyhedra', [[4, 4], [5, 5], [6, 6]]
+    # General settings
+    config_general = c.GeneralSettings(
+        project_name="SiO2",                    # Project name
+        export_directory="examples/exports",    # Export directory
+        file_location="path/to/trajectory.xyz", # File location
+        range_of_frames=(0, 10),                # Range of frames to analyze
+        apply_pbc=True,                         # Apply periodic boundary conditions
+        verbose=True,                           # Verbose mode (print progress bars, etc.)
+        save_logs=True,                         # Save logs to export directory
+        save_performance=True                   # Track & save performance metrics
     )
     ```
 
-6. Run the analysis through the main function using the provided settings object
+4. Configure lattice settings
 
     ```python
-    nexus.main(settings)
-
-    # _output_directory is the combined path of export_directory and project_name
-    print(f"Results are saved here \u279c {settings._output_directory}\n\n") 
+    # Lattice settings
+    config_lattice = c.LatticeSettings(
+        apply_custom_lattice=False,             # If False, read lattice from trajectory file
+        # Custom lattice can be specified as a numpy array if needed
+    )
     ```
 
-7. Run the script and check the results in the export directory.
+5. Set up the clustering settings
+   
+    ```python
+    # Clustering settings
+    config_clustering = c.ClusteringSettings(
+        criteria="bond",                        # "bond" or "distance" criteria
+        node_types=["Si", "O"],                 # Types of nodes in the system
+        node_masses=[28.0855, 15.9994],        # Masses of nodes in reduced units
+        connectivity=["Si", "O", "Si"],         # Connectivity pattern to analyze
+        cutoffs=[c.Cutoff(type1="Si", type2="Si", distance=3.50),  # Cutoff distances
+                 c.Cutoff(type1="Si", type2="O", distance=2.30),   # between different
+                 c.Cutoff(type1="O", type2="O", distance=3.05)],   # types of nodes
+        
+        with_coordination_number=True,          # Calculate coordination numbers
+        coordination_mode="O",                  # Mode for coordination calculations
+        coordination_range=[4, 6],              # Range of coordination numbers to consider
+        
+        with_alternating=True,                  # Calculate alternating coordinations
+        
+        with_printed_unwrapped_clusters=False,  # Whether to output cluster coordinates
+        print_mode="connectivity"               # Mode for printing clusters
+    )
+    ```
+
+6. Configure the analysis settings
+
+    ```python
+    # Analysis settings
+    config_analysis = c.AnalysisSettings(
+        with_all=True,                          # Enable all analysis methods
+        # Specific analyses can be enabled individually as needed
+    )
+    ```
+
+7. Build the settings object using the builder pattern and run the analysis
+
+    ```python
+    # Build Settings object
+    settings = (SettingsBuilder()
+        .with_general(config_general)           # General settings
+        .with_lattice(config_lattice)           # Lattice settings
+        .with_clustering(config_clustering)     # Clustering settings
+        .with_analysis(config_analysis)         # Analysis settings
+        .build()                                # Build the settings object
+    )
+    
+    # Run the main function to process the trajectory
+    main(settings)
+    ```
+
+8. Run the script and check the results in the export directory.
 
     ```bash
-    python quick_start.py
+    python your_script.py
     ```
 
-8. View the results in the specified export directory.
+9. View the results in the specified export directory.
 
     ```bash
-    ls export/quick_start/
+    ls examples/exports/SiO2/
     ```
+
+### Advanced Usage: Reconfiguring and Rerunning
+
+You can modify settings and rerun the analysis with new parameters:
+
+```python
+# Update clustering settings
+config_clustering.with_number_of_shared = True
+config_clustering.coordination_range = [6, 6]  # Looking for SiO6-SiO6 connections
+config_analysis.overwrite = False              # Preserve previous results
+
+# Rebuild settings with updated configuration
+settings = (SettingsBuilder()
+    .with_general(config_general)
+    .with_lattice(config_lattice)
+    .with_clustering(config_clustering)
+    .with_analysis(config_analysis)
+    .build()
+)
+
+# Run the analysis again with new settings
+main(settings)
+```
 
 For different and more advanced examples, see the [usage_examples](usage_examples.rst) section.

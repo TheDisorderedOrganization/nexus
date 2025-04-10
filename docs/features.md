@@ -17,7 +17,6 @@ Nexus-CAT provides a wide range of features for cluster analysis in atomistic si
 
 ### Extensibility
 
-- Add new extensions for different systems (e.g., `SiOz`, `OO`, `SiSi`).
 - Customize cluster connectivity criteria and polyhedra.
 
 ### Visualization

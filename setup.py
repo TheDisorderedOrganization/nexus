@@ -2,13 +2,20 @@ from setuptools import setup, find_packages
 
 setup(
     name="nexus-cat",
-    version="1.0.5",
-    description="Nexus is a Cluster Analysing Toolkit package for atomic systems.",
-    author="Julien Perradin",
+    version="2.0.0",
+    description="Nexus is a Cluster Analysing Toolkit package.",
+    author="The Disordered Organization",
     author_email="julien.perradin@protonmail.fr",
-    url="https://github.com/jperradin/nexus",
+    url="https://github.com/TheDisorderedOrganization/nexus",
     packages=find_packages(),
-    install_requires=["numpy", "scipy", "tqdm", "natsort", "colorama"],
+    install_requires=[
+        "numpy>=1.20.0",
+        "tqdm>=4.50.0",
+        "colorama>=0.4.4",
+        "numba>=0.53.0",
+        "psutil>=5.8.0",
+    ],
+    python_requires=">=3.9",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Science/Research",

@@ -8,92 +8,63 @@ For a complete list of classes and methods, refer to the source code.
 
 ### `main` function
 
-Analyzes a trajectory based on the provided settings.
+Analyzes molecular dynamics trajectories with performance tracking, cluster analysis, and multiple analytics capabilities.
 
-**Methods:**
-- `main(settings) -> None`: The main function that initializes and runs the application.
+**Parameters:**
+- `settings (Settings)`: Settings object containing all configuration parameters.
+
+**Functionality:**
+- Performance tracking and metrics collection
+- Trajectory reading and system initialization
+- Frame-by-frame processing with progress visualization
+- Neighbor finding and cluster identification
+- Multiple analyzer application to each frame
+- Results output and cluster visualization
+- Performance metrics reporting
 
 ## Modules
 
 ### `core` module
 
-#### `Atom` class
-
-Represents an atom within a system.
-
-**Attributes:**
-- `element (str)`: Atomic element.
-- `id (int)`: Identifier of the atom in the system.
-- `position (np.array)`: XYZ coordinates.
-- `frame (int)`: Frame index in the trajectory.
-- `cutoffs (dict)`: Cutoff distances dictionary (Cutoff object).
-- `extension (str)`: Extension used for method determination.
-- `atomic_mass (float)`: Atomic mass of the atom.
-- `neighbours (list)`: List of first neighbours (PBC applied).
-- `coordination (int)`: Number of neighbours around the atom (PBC applied).
-- `parent (Atom)`: Root of the cluster.
-- `cluster_id (int)`: Cluster index to which the atom belongs.
-- `cluster_type (str)`: Cluster type to which the atom belongs.
-
-**Methods:**
-- `__init__(self, element, id, position, frame, cutoffs, extension="SiOz")`: Initializes an Atom object.
-- `get_element(self) -> str`: Returns the element of the Atom.
-- `get_id(self) -> int`: Returns the unique identifier of the Atom.
-- `get_position(self) -> np.array`: Returns the spatial coordinates of the Atom.
-- `get_frame(self) -> int`: Returns the frame index associated with the Atom.
-- `get_neighbours(self) -> list`: Returns the list of neighbours of the Atom.
-- `get_atomic_mass(self) -> float`: Returns the atomic mass of the Atom.
-- `get_coordination(self) -> int`: Returns the coordination number of the Atom.
-- `get_cluster_id(self) -> int`: Returns the cluster id that the atom belongs to.
-- `add_neighbour(self, neighbour) -> None`: Adds a neighbour to the list of neighbours of the Atom.
-- `filter_neighbours(self, distances) -> None`: Removes neighbours not within cutoff distances (depending on pair of atoms).
-- `set_cluster(self, cluster_id, cluster_type) -> None`: Sets the cluster and type that the atom belongs to.
-- `reset_cluster(self) -> None`: Resets the cluster(s) of the atom.
-
-#### `Box` class
-
-Represents a simulation box in three-dimensional space at each frame of the trajectory.
-
-**Attributes:**
-- `length_x (list)`: Length of the box in the x-direction.
-- `length_y (list)`: Length of the box in the y-direction.
-- `length_z (list)`: Length of the box in the z-direction.
-- `volume (list)`: Volume of the box.
-
-**Methods:**
-- `__init__(self) -> None`: Initializes a Box object.
-- `add_box(self, length_x, length_y, length_z) -> None`: Adds a box to the list of boxes.
-- `get_volume(self, configuration) -> float`: Calculates and returns the volume of the box.
-- `get_box_dimensions(self, configuration) -> list`: Returns the dimensions of the box.
-
 #### `Cluster` class
 
-Represents a cluster of atoms within a system.
+Represents a cluster of nodes within a system.
 
 **Attributes:**
-- `atoms (list)`: List of Atom objects belonging to the cluster.
-- `box (Box)`: Box object representing the simulation box.
-- `connectivity (str)`: Connectivity of the cluster.
-- `root_id (int)`: Atom id that is the root of the cluster.
-- `frame (int)`: Frame of the trajectory.
-- `size (int)`: Size of the cluster (number of atoms).
+- `nodes (List[Node])`: List of Node objects belonging to the cluster.
+- `connectivity (str)`: Connectivity criteria of the cluster.
+- `root_id (int)`: Node ID that is the root of the cluster.
+- `size (int)`: Size of the cluster (number of nodes).
+- `settings (Settings)`: Settings object containing configuration parameters.
+- `lattice (np.ndarray)`: Lattice of the system containing the cluster.
 - `center_of_mass (list)`: Center of mass of the cluster.
-- `indices (list)`: List of indices of the atoms.
+- `symbols (list)`: List of symbols of nodes in the cluster.
+- `indices (list)`: List of indices of the nodes.
 - `unwrapped_positions (list)`: List of unwrapped positions of the cluster.
-- `percolation_probability (str)`: Percolation probability.
+- `percolation_probability (str)`: Percolation probability along different dimensions.
 - `gyration_radius (float)`: Gyration radius of the cluster.
+- `order_parameter (list)`: Order parameter values for the cluster.
+- `total_nodes (int)`: Total number of nodes in the system.
+- `concentration (float)`: Concentration of the cluster in the system.
+- `is_percolating (bool)`: Whether the cluster percolates in any dimension.
 
 **Methods:**
-- `__init__(self, atoms=None, box=None, connectivity="", root_id=None, frame=None, size=None) -> None`: Initializes a Cluster object.
-- `add_atom(self, atom) -> None`: Adds an atom to the cluster.
-- `get_atoms(self) -> list`: Returns the list of Atom objects belonging to the cluster.
-- `set_indices_and_positions(self, positions_dict) -> None`: Sets the array of unique indices and positions of atoms in the cluster.
+- `__init__(self, connectivity: str, root_id: int, size: int, settings: Settings, lattice: np.ndarray) -> None`: Initializes a Cluster object.
+- `add_node(self, node: Node) -> None`: Adds a node to the cluster.
+- `set_lattice(self, lattice: np.ndarray) -> None`: Sets the lattice for the cluster.
+- `get_nodes(self) -> List[Node]`: Returns the list of Node objects belonging to the cluster.
+- `get_connectivity(self) -> str`: Returns the connectivity criteria of the cluster.
+- `get_size(self) -> int`: Returns the size of the cluster.
+- `set_indices_and_positions(self, positions_dict) -> None`: Sets the array of unique indices and positions of nodes in the cluster.
 - `calculate_center_of_mass(self) -> None`: Calculates the center of mass of the cluster.
-- `write_coordinates(self, path_to_directory) -> None`: Writes the cluster coordinates to an XYZ file.
 - `calculate_gyration_radius(self) -> None`: Calculates the gyration radius of the cluster.
 - `calculate_percolation_probability(self) -> None`: Calculates the percolation probability of the cluster.
-- `calculate_unwrapped_positions(self, criteria, chain, quiet=False) -> None`: Calculates the unwrapped positions of atoms in the cluster.
-- `unwrap_position(self, vector, box_size)`: Unwraps position considering periodic boundary conditions.
+- `calculate_order_parameter(self) -> None`: Calculates the order parameter of the cluster.
+- `calculate_concentration(self) -> None`: Calculates the concentration of the cluster.
+- `calculate_unwrapped_positions(self) -> None`: Calculates the unwrapped positions of atoms in the cluster.
+- `unwrap_position(self, vector)`: Unwraps position considering periodic boundary conditions.
+- `__str__(self) -> str`: Returns a string representation of the cluster.
+- `__repr__(self) -> str`: Returns a detailed string representation of the cluster.
 
 #### `Cutoff` class
 
@@ -112,376 +83,445 @@ Manages cutoff distances for pairs of elements.
 
 #### `System` class
 
-Represents a system of atoms and provides methods for analyzing and manipulating the system.
+Manages the atomic system, trajectory data, and interaction with file readers.
 
 **Attributes:**
-- `settings (Settings)`: Settings object containing the list of all the parameters.
-- `atoms (list)`: List of all the atoms in the system.
-- `box (Box)`: The Box object containing the lattice information at each frame.
-- `clusters (list)`: List of all the clusters of the system.
-- `counter_c (int)`: Counter of Cluster object.
-- `frame (int)`: Frame of the system in the trajectory.
-- `cutoffs (Cutoff)`: Cutoff object managing cutoff distances for pairs of elements.
+- `reader (BaseReader)`: The file reader used to load data.
+- `settings (Settings)`: The settings object containing configuration parameters.
+- `current_frame (Optional[Frame])`: The currently loaded frame. None if no frame is loaded.
+- `_current_frame_index (Optional[int])`: Index of the current frame.
+- `_num_frames (Optional[int])`: Cache for number of frames.
 
 **Methods:**
-- `__init__(self, settings) -> None`: Initializes a System object.
-- `add_atom(self, atom) -> None`: Adds an Atom object to the list of atoms.
-- `add_cluster(self, cluster:object) -> None`: Adds a Cluster object to the list of clusters.
-- `get_atoms(self) -> list`: Returns the list of atoms.
-- `get_positions(self) -> tuple`: Returns the list of positions and elements of all Atom objects.
-- `get_positions_by_element(self, element) -> np.array`: Returns the list of positions of all Atom objects of the same element.
-- `get_atoms_by_element(self, element) -> list`: Returns the list of Atom objects belonging to the same species.
-- `get_unique_element(self) -> np.array`: Returns the unique elements present in the system along with their counts.
-- `reset_cluster_indexes(self) -> None`: Resets the cluster indexes for all Atom objects in the system.
-- `wrap_atomic_positions(self) -> None`: Wraps atomic positions inside the simulation box using periodic boundary conditions.
-- `compute_mass(self) -> float`: Returns the mass of the system in atomic unit.
-- `calculate_neighbours(self) -> None`: Calculates the nearest neighbours of all atoms in the system.
-- `calculate_concentrations(self, extension) -> None`: Determines the structural units and other structural properties.
-- `set_concentrations(self, connectivity: str) -> None`: Sets the concentrations of the structural units.
-- `get_concentration(self, connectivity: str) -> float`: Returns the concentration of the sites for a given connectivity.
-- `get_all_clusters(self, connectivity: str) -> list`: Returns the list of all Cluster objects associated with the given connectivity.
-- `get_filtered_clusters(self, connectivity:str) -> list`: Returns the list of Cluster objects associated with the given connectivity.
-- `get_all_cluster_sizes(self, connectivity:str) -> list`: Returns the list of cluster sizes associated with the given connectivity.
-- `get_filtered_cluster_sizes(self, connectivity:str) -> list`: Returns the list of cluster sizes associated with the given connectivity.
-- `get_cluster_sizes_distribution(self, connectivity:str) -> dict`: Returns the cluster size distribution of the clusters associated with the given connectivity.
-- `get_gyration_radius_distribution(self, connectivity:str, list_sizes:list) -> dict`: Returns the gyration radius distribution of the clusters associated with the given connectivity.
-- `calculate_order_parameter(self, connectivity:str) -> list`: Calculates the order parameter of the percolating cluster.
-- `calculate_percolation_probability(self, connectivity:str) -> list`: Calculates the percolation probability of the percolating cluster.
-- `write_coordinates_all_in_one(self, connectivity, path_to_directory) -> None`: Writes the cluster coordinates to an XYZ file.
-- `decrypt_connectivity(self, connectivity)`: Decrypts the connectivity string to get the atomic species and the number of neighbors.
-- `find(self, atom) -> object`: Finds the root of the cluster to which the given atom belongs.
-- `union(self, atom_1, atom_2) -> None`: Unions the two clusters to which the given atoms belong.
-- `find_clusters(self, connectivity) -> None`: Finds clusters based on specified criteria.
-- `find_extra_clusters(self) -> None`: Finds extra clusters based on the extension.
+- `__init__(self, reader: BaseReader, settings: Settings) -> None`: Initializes a System object.
+- `load_frame(self, frame_index: int) -> bool`: Loads a specific frame from the trajectory file.
+- `get_frame(self, frame_index: int) -> Optional[Frame]`: Retrieves a specific frame, loading it if necessary.
+- `get_num_frames(self) -> int`: Gets the total number of frames in the trajectory.
+- `iter_frames(self) -> Generator[Frame, None, None]`: Iterates through the frames of the trajectory, respecting the range defined in settings.
+- `__iter__(self) -> 'System'`: Makes the System object itself iterable.
+- `__next__(self) -> Frame`: Returns the next frame during iteration.
 
-### `data` module
+#### `Frame` class
 
-#### `chemical_symbols` array
+Representation of a frame of a trajectory.
 
-An array containing the chemical symbols of elements in the periodic table.
-
-#### `atomic_masses` array
-
-An array containing the atomic masses of elements in the periodic table.
-
-#### `load_data` function
-
-Loads the chemical symbols and atomic masses data.
+**Attributes:**
+- `frame_id (int)`: ID of the frame.
+- `nodes (List[Node])`: List of nodes in the frame.
+- `lattice (np.ndarray)`: Lattice of the frame.
+- `clusters (Optional[List[Cluster]])`: List of clusters in the frame.
+- `_data (Dict[str, np.ndarray])`: Internal data structure for node data (symbol, position).
 
 **Methods:**
-- `load_data() -> tuple`: Loads the chemical symbols and atomic masses data.
+- `__post_init__(self) -> None`: Initializes the object after creation.
+- `initialize_nodes(self) -> None`: Initializes the list of nodes in the frame.
+- `set_lattice(self, lattice: np.ndarray) -> None`: Sets the lattice of the frame.
+- `get_lattice(self) -> Optional[np.ndarray]`: Gets the lattice of the frame.
+- `get_unique_elements(self) -> List[str]`: Gets the unique elements in the frame.
+- `get_node_by_id(self, node_id: int) -> Optional[Node]`: Gets a node by its ID.
+- `get_positions(self) -> np.ndarray`: Gets the positions of all nodes in the frame.
+- `get_positions_by_element(self) -> Dict[str, np.ndarray]`: Gets the positions of all nodes in the frame grouped by element.
+- `get_wrapped_positions(self) -> np.ndarray`: Gets the wrapped positions of all nodes in the frame.
+- `get_wrapped_positions_by_element(self) -> Dict[str, np.ndarray]`: Gets the wrapped positions of all nodes in the frame grouped by element.
+- `get_clusters(self) -> List[Cluster]`: Gets the clusters of the frame.
+- `get_nodes(self) -> List[Node]`: Gets the nodes of the frame.
+- `add_cluster(self, cluster: Cluster) -> None`: Adds a cluster to the frame.
+- `set_clusters(self, clusters: List[Cluster]) -> None`: Sets the clusters of the frame.
+- `get_concentration(self) -> float`: Gets the concentrations of each cluster connectivity in the frame.
+- `__len__(self) -> int`: Gets the number of nodes in the frame.
+- `__str__(self) -> str`: Returns a string representation of the frame.
+- `__repr__(self) -> str`: Returns a detailed string representation of the frame.
 
-#### `get_chemical_symbol` function
+#### `Node` class
 
-Returns the chemical symbol for a given atomic number.
+Representation of a node within a system.
+
+**Attributes:**
+- `symbol (str)`: Symbol of the node.
+- `node_id (int)`: ID of the node (unique identifier).
+- `position (np.ndarray)`: Position of the node.
+- `parent (Optional['Node'])`: Parent of the node (Optional).
+- `neighbors (List['Node'])`: List of neighbors of the node.
+- `cluster_id (Optional[int])`: Cluster ID the node belongs to.
+- `distances (Optional[List[float]])`: Distances of the neighbors of the node.
+- `indices (Optional[List[int]])`: Indices of the neighbors of the node.
+- `mass (float)`: Mass of the node.
+- `coordination (int)`: Coordination number of the node.
+- `other (Optional[List[str]])`: Other attributes of the node.
 
 **Methods:**
-- `get_chemical_symbol(atomic_number: int) -> str`: Returns the chemical symbol for a given atomic number.
-
-#### `get_atomic_mass` function
-
-Returns the atomic mass for a given atomic number.
-
-**Methods:**
-- `get_atomic_mass(atomic_number: int) -> float`: Returns the atomic mass for a given atomic number.
-
-### `extensions` module
-
-#### `SiSi` module
-
-This module contains all the methods/functions that are specific to Si-Si clusters.
-
-**Classes:**
-- `Silicon`: Represents a silicon atom within a Si-Si cluster.
-
-**Functions:**
-- `transform_into_subclass(atom: Atom) -> object`: Returns a Silicon object from the subclass Silicon.
-- `get_connectivity(cluster_settings) -> list`: Returns the list of connectivity for the given cluster settings.
-- `get_extra_connectivity(cluster_settings) -> list`: Returns the list of extra connectivity for the given cluster settings.
-- `get_default_settings(criteria="distance") -> dict`: Loads the default parameters for the SiSi extension.
-- `calculate_concentrations(atoms: list, criteria: str, quiet: bool) -> dict`: Calculates the concentrations for each cluster connectivity.
-- `find_extra_clusters(atoms: list, box: Box, counter_c: int, settings: object) -> None`: Finds LD, HD, VHD, and HV clusters in the system.
-
-#### `SiOz` module
-
-This module contains all the methods/functions that are specific to SiOz-SiOz clusters.
-
-**Classes:**
-- `Silicon`: Represents a silicon atom within a SiOz cluster.
-- `Oxygen`: Represents an oxygen atom within a SiOz cluster.
-
-**Functions:**
-- `transform_into_subclass(atom: Atom) -> object`: Returns a Silicon or Oxygen object from the subclass Silicon or Oxygen.
-- `get_connectivity(cluster_settings) -> list`: Returns the list of connectivity for the given cluster settings.
-- `get_extra_connectivity(cluster_settings) -> list`: Returns the list of extra connectivity for the given cluster settings.
-- `get_default_settings(criteria="bond") -> dict`: Loads the default parameters for the SiOz extension.
-- `calculate_concentrations(atoms: list, criteria: str, quiet: bool) -> dict`: Calculates the concentrations for each cluster connectivity.
-- `find_extra_clusters(atoms: list, box: Box, counter_c: int, settings: object) -> None`: Finds stishovite clusters in the system.
-
-#### `OO` module
-
-This module contains all the methods/functions that are specific to O-O clusters.
-
-**Classes:**
-- `Oxygen`: Represents an oxygen atom within an O-O cluster.
-
-**Functions:**
-- `transform_into_subclass(atom: Atom) -> object`: Returns an Oxygen object from the subclass Oxygen.
-- `get_connectivity(cluster_settings) -> list`: Returns the list of connectivity for the given cluster settings.
-- `get_extra_connectivity(cluster_settings) -> list`: Returns the list of extra connectivity for the given cluster settings.
-- `get_default_settings(criteria="distance") -> dict`: Loads the default parameters for the OO extension.
-- `calculate_concentrations(atoms: list, criteria: str, quiet: bool) -> dict`: Calculates the concentrations for each cluster connectivity.
-- `find_extra_clusters(atoms: list, box: Box, counter_c: int, settings: object) -> None`: Finds LD, HD, VHD, and HV clusters in the system.
-
-#### `NaO` module
-
-This module contains all the methods/functions that are specific to Na-Na clusters.
-
-**Classes:**
-- `Sodium`: Represents a sodium atom within a Na-Na cluster.
-- `Oxygen`: Represents an oxygen atom within a Na-Na cluster.
-
-**Functions:**
-- `transform_into_subclass(atom: Atom) -> object`: Returns a Sodium or Oxygen object from the subclass Sodium or Oxygen.
-- `get_connectivity(cluster_settings) -> list`: Returns the list of connectivity for the given cluster settings.
-- `get_extra_connectivity(cluster_settings) -> list`: Returns the list of extra connectivity for the given cluster settings.
-- `get_default_settings(criteria="distance") -> dict`: Loads the default parameters for the NaO extension.
-- `calculate_concentrations(atoms: list, criteria: str, quiet: bool) -> dict`: Calculates the concentrations for each cluster connectivity.
-- `find_extra_clusters(atoms: list, box: Box, counter_c: int, settings: object) -> None`: Finds LD, HD, VHD, and HV clusters in the system.
+- `__post_init__(self) -> None`: Initializes the object after creation.
+- `wrap_position(position: np.ndarray, lattice: np.ndarray) -> np.ndarray`: Wraps position in a periodic box defined by the lattice.
+- `add_neighbor(self, node: 'Node') -> None`: Adds a node as a neighbor.
+- `reset_parent(self) -> None`: Resets the parent of the node to itself.
+- `set_coordination(self, coordination: int) -> None`: Sets the coordination number of the node.
+- `__str__(self) -> str`: Returns a string representation of the node.
+- `__repr__(self) -> str`: Returns a detailed string representation of the node.
 
 ### `io` module
 
-#### `read_lattices_properties` function
+The IO module handles file reading and writing operations for trajectory data and analysis results.
 
-Reads lattice properties from a trajectory file and stores them in a Box object.
+#### `reader` submodule
 
-**Methods:**
-- `read_lattices_properties(box, file_path, keyword="Lattice") -> None`: Creates the Box object for each frame in the trajectory file.
+##### `BaseReader` class
 
-#### `count_configurations` function
-
-Counts the number of configurations in a trajectory file.
-
-**Methods:**
-- `count_configurations(file_path, keyword="Lattice") -> int`: Counts the number of configurations in the trajectory file.
-
-#### `read_and_create_system` function
-
-Reads an XYZ file and creates a System object from the data.
-
-**Methods:**
-- `read_and_create_system(file_path, frame, frame_size, settings, cutoffs, start, end) -> System`: Reads the XYZ file and returns the frame as a System object.
-
-#### `write_list_of_files` function
-
-Writes a list of all-in-one unwrapped clusters files to a text file.
-
-**Methods:**
-- `write_list_of_files(dirpath: str) -> None`: Writes a list of the all-in-one unwrapped clusters files to a text file.
-
-#### `make_lines_unique` function
-
-Reads a file, removes duplicate lines, and rewrites the file with unique lines.
-
-**Methods:**
-- `make_lines_unique(filepath: str) -> None`: Reads a file, removes duplicate lines, and rewrites the file with unique lines.
-
-#### `Result` class
-
-Represents a generic result.
+Abstract base class for all file readers.
 
 **Attributes:**
-- `property (str)`: The property name.
-- `info (str)`: Additional information about the result.
-- `init_frame (int)`: The initial frame.
-- `timeline (list)`: List of data points over time.
-- `result (float)`: The computed result.
-- `error (float)`: The error associated with the result.
-
-#### `AverageClusterSize` class
-
-Represents a result for average cluster sizes.
-
-**Attributes:**
-- `average_size (float)`: The computed average cluster size.
-- `filepath (str)`: The path to the output file.
+- `verbose (bool)`: Whether to print verbose output.
+- `filename (str)`: Path to the file being read.
+- `_settings (Settings)`: Settings object.
+- `num_frames (int)`: Number of frames in the file.
+- `frame_offsets (List[int])`: Byte offsets for each frame.
+- `frame_sizes (List[int])`: Byte sizes of each frame.
+- `mmaped_file (Optional[memoryview])`: Memory-mapped file for efficient access.
+- `is_indexed (bool)`: Whether the file has been indexed.
 
 **Methods:**
-- `add_to_timeline(self, value, concentration) -> None`: Appends a data point to the timeline.
-- `calculate_average_cluster_size(self) -> None`: Calculates the average cluster size based on the timeline data.
-- `write_file_header(self, overwrite, path_to_directory, number_of_frames) -> None`: Initializes the output file with a header.
-- `append_results_to_file(self) -> None`: Appends the result to the output file.
+- `__init__(self, settings: Settings) -> None`: Initializes a BaseReader object.
+- `set_verbose(self, verbose: bool) -> None`: Sets the verbosity.
+- `seek_to_line(self, file_handle: TextIO, offset: int) -> None`: Seeks to a specific line in the file.
+- `detect(self, filepath: str) -> bool`: Determines if this reader can process the file (abstract).
+- `scan(self) -> List[Frame]`: Scans the file to collect metadata (abstract).
+- `parse(self) -> Generator[Frame, None, None]`: Parses the file and yields frames (abstract).
 
-#### `BiggestClusterSize` class
+##### `ReaderFactory` class
 
-Represents a result for the biggest cluster size.
-
-**Attributes:**
-- `biggest_size (float)`: The computed biggest cluster size.
-- `filepath (str)`: The path to the output file.
+Factory for creating file readers based on file type.
 
 **Methods:**
-- `add_to_timeline(self, value, concentration) -> None`: Appends a data point to the timeline.
-- `calculate_biggest_cluster_size(self) -> None`: Calculates the biggest cluster size based on the timeline data.
-- `write_file_header(self, overwrite, path_to_directory, number_of_frames) -> None`: Initializes the output file with a header.
-- `append_results_to_file(self) -> None`: Appends the result to the output file.
+- `__init__(self, settings: Settings) -> None`: Initializes the factory and registers readers.
+- `register_reader(self, reader: BaseReader)`: Registers a new reader instance.
+- `get_reader(self) -> Optional[BaseReader]`: Returns the appropriate reader for a given file.
 
-#### `SpanningClusterSize` class
+##### `XYZReader` class
 
-Represents a result for the spanning cluster size.
+Reader for XYZ format trajectory files.
 
-**Attributes:**
-- `spanning_size (float)`: The computed spanning cluster size.
-- `filepath (str)`: The path to the output file.
+##### `LAMMPSReader` class
 
-**Methods:**
-- `add_to_timeline(self, value, concentration) -> None`: Appends a data point to the timeline.
-- `calculate_spanning_cluster_size(self) -> None`: Calculates the spanning cluster size based on the timeline data.
-- `write_file_header(self, overwrite, path_to_directory, number_of_frames) -> None`: Initializes the output file with a header.
-- `append_results_to_file(self) -> None`: Appends the result to the output file.
+Reader for LAMMPS trajectory (lammpstrj) format files.
 
-#### `ClusterSizeDistribution` class
+#### `writer` submodule
 
-Represents a result for the cluster size distribution.
+##### `BaseWriter` class
+
+Abstract base class for all file writers.
 
 **Attributes:**
-- `distribution (dict)`: The computed cluster size distribution.
-- `filepath (str)`: The path to the output file.
+- `verbose (bool)`: Whether to print verbose output.
+- `_settings (Settings)`: Settings object.
 
 **Methods:**
-- `add_to_timeline(self, frame: int, value: list, concentration: float) -> None`: Appends a data point to the timeline.
-- `calculate_cluster_size_distribution(self) -> None`: Calculates the cluster size distribution based on the timeline data.
-- `write_file_header(self, path_to_directory, number_of_frames) -> None`: Initializes the output file with a header.
-- `append_results_to_file(self) -> None`: Appends the result to the output file.
+- `__init__(self, settings: Settings) -> None`: Initializes a BaseWriter object.
+- `write(self) -> None`: Writes data to a file (abstract).
 
-#### `GyrationRadiusDistribution` class
+##### `WriterFactory` class
 
-Represents a result for the gyration radius distribution.
-
-**Attributes:**
-- `distribution (dict)`: The computed gyration radius distribution.
-- `filepath (str)`: The path to the output file.
+Factory for creating file writers.
 
 **Methods:**
-- `add_to_timeline(self, frame: int, value: list, concentration: float) -> None`: Appends a data point to the timeline.
-- `calculate_gyration_radius_distribution(self) -> None`: Calculates the gyration radius distribution based on the timeline data.
-- `write_file_header(self, path_to_directory, number_of_frames) -> None`: Initializes the output file with a header.
-- `append_results_to_file(self) -> None`: Appends the result to the output file.
+- `__init__(self, settings: Settings)`: Initializes the factory and registers writers.
+- `register_writer(self, writer: BaseWriter)`: Registers a new writer class.
+- `get_writer(self, name: str, mode: str = "all") -> Optional[BaseWriter]`: Returns the appropriate writer instance.
 
-#### `CorrelationLength` class
+##### `ClustersWriter` class
 
-Represents a result for the correlation length.
+Writer for cluster data.
 
-**Attributes:**
-- `corre_length (float)`: The computed correlation length.
-- `filepath (str)`: The path to the output file.
+##### `LogsWriter` class
 
-**Methods:**
-- `add_to_timeline(self, frame, value, concentration) -> None`: Appends a data point to the timeline.
-- `calculate_correlation_length(self) -> None`: Calculates the correlation length based on the timeline data.
-- `write_file_header(self, overwrite, path_to_directory, number_of_frames) -> None`: Initializes the output file with a header.
-- `append_results_to_file(self) -> None`: Appends the result to the output file.
+Writer for log files.
 
-#### `OrderParameter` class
+##### `PerformanceWriter` class
 
-Represents a result for the order parameter.
+Writer for performance metrics.
 
-**Attributes:**
-- `order_parameter (float)`: The computed order parameter.
-- `filepath (str)`: The path to the output file.
+##### `MultipleFilesSummaryWriter` class
 
-**Methods:**
-- `add_to_timeline(self, frame: int, value: list, concentration: float) -> None`: Appends a data point to the timeline.
-- `calculate_order_parameter(self) -> None`: Calculates the order parameter based on the timeline data.
-- `write_file_header(self, overwrite, path_to_directory, number_of_frames) -> None`: Initializes the output file with a header.
-- `append_results_to_file(self) -> None`: Appends the result to the output file.
-
-#### `PercolationProbability` class
-
-Represents a result for the percolation probability.
-
-**Attributes:**
-- `percolation_probability (float)`: The computed percolation probability.
-- `filepath (str)`: The path to the output file.
-
-**Methods:**
-- `add_to_timeline(self, frame: int, value:list, concentration: float) -> None`: Appends a data point to the timeline.
-- `calculate_percolation_probability(self) -> None`: Calculates the percolation probability based on the timeline data.
-- `write_file_header(self, overwrite, path_to_directory, number_of_frames) -> None`: Initializes the output file with a header.
-- `append_results_to_file(self) -> None`: Appends the result to the output file.
+Writer for summarizing data from multiple files.
 
 ### `settings` module
 
+The settings module provides a configuration system for the Nexus package using dataclasses and the builder pattern.
+
 #### `Settings` class
 
-Handles the configuration settings for the application.
+Main settings class that encapsulates all configuration parameters for the application.
 
 **Attributes:**
-- `project_name (Parameter)`: Name of the project used for the output directory.
-- `export_directory (Parameter)`: Parent directory where the output files will be saved.
-- `build_fancy_recaps (Parameter)`: Whether to build fancy recaps of the results into a single file.
-- `build_fancy_plots (Parameter)`: Whether to build fancy plots of the results into a single file.
-- `path_to_xyz_file (Parameter)`: Path to the XYZ file containing the atomic coordinates.
-- `number_of_atoms (Parameter)`: Number of atoms in the system.
-- `number_of_frames (Parameter)`: Number of frames in the XYZ file.
-- `header (Parameter)`: Number of lines in the header of the XYZ file.
-- `range_of_frames (Parameter)`: Range of frames to be analysed.
-- `frames_to_analyse (Parameter)`: Frames to be analysed.
-- `timestep (Parameter)`: Timestep of the simulation.
-- `lbox (Parameter)`: Box length.
-- `temperature (Parameter)`: Temperature of the system.
-- `pressure (Parameter)`: Pressure of the system.
-- `version (Parameter)`: Version of the software.
-- `quiet (Parameter)`: Whether to print settings or not.
-- `overwrite_results (Parameter)`: Whether to overwrite files by default.
-- `print_clusters_positions (Parameter)`: Whether to print the positions of the clusters.
-- `max_size (Parameter)`: Maximum size of the clusters for the cluster size distribution.
-- `supported_extensions (Parameter)`: List of supported extensions.
+- `project_name (str)`: Name of the project.
+- `export_directory (str)`: Directory for exporting results.
+- `file_location (str)`: Path to the trajectory file.
+- `range_of_frames (Tuple[int, int])`: Range of frames to process (start, end).
+- `apply_pbc (bool)`: Whether to apply periodic boundary conditions.
+- `verbose (bool)`: Whether to print verbose information.
+- `save_logs (bool)`: Whether to save log files.
+- `save_performance (bool)`: Whether to save performance metrics.
+- `general (GeneralSettings)`: General settings object.
+- `lattice (LatticeSettings)`: Lattice settings object.
+- `clustering (ClusteringSettings)`: Clustering settings object.
+- `analysis (AnalysisSettings)`: Analysis settings object.
 
 **Methods:**
-- `__init__(self, extension="SiOz") -> None`: Initializes a Settings object with default settings.
-- `load_default_settings(self, extension) -> None`: Loads default settings based on the extension.
-- `print_settings(self) -> None`: Prints the current settings.
-- `print_all_settings(self) -> None`: Prints all settings, including those not recommended for printing.
+- `output_directory(self) -> str`: Returns the full output directory path.
+- `set_range_of_frames(self, start: int, end: Optional[int] = None) -> None`: Sets the range of frames to process.
+- `__str__(self) -> str`: Returns a string representation of the settings.
 
-#### `Parameter` class
+#### `SettingsBuilder` class
 
-Represents a generic parameter with a name and value.
+Builder class for creating and validating Settings objects.
+
+**Methods:**
+- `__init__(self)`: Initializes the builder with default settings.
+- `with_lattice(self, lattice: LatticeSettings)`: Sets the lattice settings.
+- `with_general(self, general: GeneralSettings)`: Sets the general settings.
+- `with_analysis(self, analysis: AnalysisSettings)`: Sets the analysis settings.
+- `with_clustering(self, clustering: ClusteringSettings)`: Sets the clustering settings with validation.
+- `build(self) -> Settings`: Builds and returns the final Settings object.
+
+#### `GeneralSettings` class
+
+Settings for general application configuration.
 
 **Attributes:**
-- `name (str)`: Name of the parameter.
-- `value`: Value associated with the parameter.
+- `project_name (str)`: Name of the project.
+- `export_directory (str)`: Directory to export results.
+- `file_location (str)`: Path to the trajectory file.
+- `range_of_frames (Tuple[int, int])`: Range of frames to process.
+- `apply_pbc (bool)`: Whether to apply periodic boundary conditions.
+- `verbose (bool)`: Whether to print settings and progress information.
+- `save_logs (bool)`: Whether to save logs.
+- `save_performance (bool)`: Whether to save performance metrics.
 
-**Methods:**
-- `__init__(self, name, value) -> None`: Initializes a Parameter object with a name and value.
-- `get_name(self) -> str`: Returns the name of the parameter.
-- `get_value(self)`: Returns the value associated with the parameter.
-- `set_value(self, new_value) -> None`: Sets a new value for the parameter.
+#### `LatticeSettings` class
 
-#### `ClusterParameter` class
-
-Represents a parameter specific to cluster settings.
+Settings for lattice configuration.
 
 **Attributes:**
-- `name (str)`: The name of the cluster parameter.
-- `value (dict)`: The value of the cluster parameter, stored as a dictionary.
+- `apply_custom_lattice (bool)`: Whether to apply a custom lattice.
+- `custom_lattice (np.ndarray)`: The custom lattice as a 3x3 matrix.
+- `get_lattice_from_file (bool)`: Whether to get the lattice from a file.
+- `lattice_file_location (str)`: Location of the lattice file.
+- `apply_lattice_to_all_frames (bool)`: Whether to apply the lattice to all frames.
 
 **Methods:**
-- `__init__(self, name, value) -> None`: Initializes a ClusterParameter object.
-- `set_cluster_parameter(self, key, new_value) -> None`: Replaces a value of the settings.
+- `__str__(self) -> str`: Returns a string representation of the lattice settings.
+
+#### `ClusteringSettings` class
+
+Settings for configuring cluster analysis.
+
+**Attributes:**
+- `criteria (str)`: Clustering criteria ("distance" or "bond").
+- `node_types (List[str])`: List of node types.
+- `node_masses (List[float])`: List of node masses in reduced units.
+- `connectivity (List[str])`: List of connectivity criteria.
+- `cutoffs (List[Cutoff])`: List of cutoff distances for pairs of elements.
+- `with_printed_unwrapped_clusters (bool)`: Whether to print unwrapped clusters.
+- `print_mode (str)`: Mode for printing clusters ("all", "connectivity", "individual", "none").
+- `with_coordination_number (bool)`: Whether to calculate coordination numbers.
+- `coordination_mode (str)`: Mode for determining coordination ("all_types", "same_type", "different_type", etc.).
+- `coordination_range (List[int])`: Minimum and maximum coordination numbers to consider.
+- `with_alternating (bool)`: Whether to calculate alternating clusters.
+- `with_number_of_shared (bool)`: Whether to calculate shared nodes.
+- `shared_mode (str)`: Mode for shared calculation.
+- `shared_threshold (int)`: Minimum shared threshold.
+
+**Methods:**
+- `get_cutoff(self, type1: str, type2: str) -> float`: Returns the cutoff for a pair of elements.
+- `__str__(self) -> str`: Returns a string representation of the clustering settings.
+
+#### `AnalysisSettings` class
+
+Settings for configuring various analyses.
+
+**Attributes:**
+- `overwrite (bool)`: Whether to overwrite existing output files.
+- `with_all (bool)`: Whether to calculate all analyses.
+- `with_average_cluster_size (bool)`: Whether to calculate average cluster size.
+- `with_largest_cluster_size (bool)`: Whether to calculate largest cluster size.
+- `with_spanning_cluster_size (bool)`: Whether to calculate spanning cluster size.
+- `with_gyration_radius (bool)`: Whether to calculate gyration radius.
+- `with_correlation_length (bool)`: Whether to calculate correlation length.
+- `with_percolation_probability (bool)`: Whether to calculate percolation probability.
+- `with_order_parameter (bool)`: Whether to calculate order parameter.
+- `with_cluster_size_distribution (bool)`: Whether to calculate cluster size distribution.
+
+**Methods:**
+- `get_analyzers(self) -> List[str]`: Returns the list of enabled analyzers.
+- `__str__(self) -> str`: Returns a string representation of the analysis settings.
+
+#### `Cutoff` class
+
+Class representing a cutoff distance between two types of nodes.
+
+**Attributes:**
+- `type1 (str)`: First node type.
+- `type2 (str)`: Second node type.
+- `distance (float)`: Cutoff distance.
+
+**Methods:**
+- `__str__(self) -> str`: Returns a string representation of the cutoff.
+- `get_distance(self) -> float`: Returns the cutoff distance.
 
 ### `utils` module
 
-#### `print_title` function
+The utils module provides various utility functions and classes used throughout the application.
 
-Prints the title and the version of the package.
+#### `aesthetics` submodule
+
+Provides functions for visual presentation and text processing.
+
+##### `print_title` function
+
+Prints the ASCII art title of the application with version information.
+
+**Parameters:**
+- `__version__ (str)`: The version of the package.
+
+##### `print_title_to_file` function
+
+Writes the ASCII art title of the application with version information to a file.
+
+**Parameters:**
+- `__version__ (str)`: The version of the package.
+- `path (str)`: Path to the output file.
+
+##### `generate_color_gradient` function
+
+Generates a color gradient between two colors for visual styling.
+
+**Parameters:**
+- `num_iterations (int)`: Number of colors to generate in the gradient.
+
+**Returns:**
+- `List[Tuple[int, int, int]]`: A list of RGB color tuples.
+
+##### `remove_duplicate_lines` function
+
+Reads a file, removes duplicate lines, and rewrites the file with unique lines.
+
+**Parameters:**
+- `filepath (str)`: Path to the file to process.
+
+#### `geometry` submodule
+
+Provides optimized functions for geometric calculations in periodic systems, using numba for acceleration.
+
+##### `wrap_position` function
+
+Wraps a single position vector into the primary unit cell of a periodic lattice.
+
+**Parameters:**
+- `position (np.ndarray)`: The position to wrap.
+- `lattice (np.ndarray)`: The lattice vectors.
+
+**Returns:**
+- `np.ndarray`: The wrapped position.
+
+##### `wrap_positions` function
+
+Wraps multiple position vectors into the primary unit cell of a periodic lattice.
+
+**Parameters:**
+- `positions (np.ndarray)`: The positions to wrap.
+- `lattice (np.ndarray)`: The lattice vectors.
+
+**Returns:**
+- `np.ndarray`: The wrapped positions.
+
+##### `calculate_direct_distance` function
+
+Calculates the Euclidean distance between two positions.
+
+**Parameters:**
+- `position1 (np.ndarray)`: The first position.
+- `position2 (np.ndarray)`: The second position.
+
+**Returns:**
+- `float`: The distance between the positions.
+
+##### `calculate_pbc_distance` function
+
+Calculates the minimum distance between two positions considering periodic boundary conditions.
+
+**Parameters:**
+- `position1 (np.ndarray)`: The first position.
+- `position2 (np.ndarray)`: The second position.
+- `lattice (np.ndarray)`: The lattice vectors.
+
+**Returns:**
+- `float`: The minimum distance between the positions.
+
+##### `calculate_direct_angle` function
+
+Calculates the angle formed by three positions.
+
+**Parameters:**
+- `position1 (np.ndarray)`: The first position.
+- `position2 (np.ndarray)`: The second position (vertex).
+- `position3 (np.ndarray)`: The third position.
+
+**Returns:**
+- `float`: The angle in degrees.
+
+##### `calculate_pbc_angle` function
+
+Calculates the angle formed by three positions considering periodic boundary conditions.
+
+**Parameters:**
+- `position1 (np.ndarray)`: The first position.
+- `position2 (np.ndarray)`: The second position (vertex).
+- `position3 (np.ndarray)`: The third position.
+- `lattice (np.ndarray)`: The lattice vectors.
+
+**Returns:**
+- `float`: The angle in degrees.
+
+##### `cartesian_to_fractional` function
+
+Converts Cartesian coordinates to fractional coordinates in a periodic lattice.
+
+**Parameters:**
+- `position (np.ndarray)`: The Cartesian position.
+- `lattice (np.ndarray)`: The lattice vectors.
+
+**Returns:**
+- `np.ndarray`: The fractional coordinates.
+
+##### `fractional_to_cartesian` function
+
+Converts fractional coordinates to Cartesian coordinates in a periodic lattice.
+
+**Parameters:**
+- `position (np.ndarray)`: The fractional position.
+- `lattice (np.ndarray)`: The lattice vectors.
+
+**Returns:**
+- `np.ndarray`: The Cartesian coordinates.
+
+#### `performance` submodule
+
+Provides tools for tracking and analyzing performance metrics.
+
+##### `Performance` class
+
+A dataclass for recording performance metrics of operations.
+
+**Attributes:**
+- `id (str)`: Unique identifier for the performance record.
+- `name (str)`: Name of the operation or component being measured.
+- `timestamp (datetime)`: When the measurement was taken.
+- `execution_time_ms (Optional[float])`: Execution time in milliseconds.
+- `memory_usage_mb (Optional[float])`: Memory usage in megabytes.
+- `cpu_usage_percent (Optional[float])`: CPU usage as a percentage.
+- `metrics (Dict[str, Any])`: Additional custom metrics.
+- `history (List[Dict[str, Any]])`: Historical performance data points.
 
 **Methods:**
-- `print_title(__version__) -> None`: Prints the title and the version of the package.
-
-#### `generate_color_gradient` function
-
-Generates a color gradient between two colors.
-
-**Methods:**
-- `generate_color_gradient(num_iterations) -> list`: Generates a color gradient between two colors.
+- `add_metric(self, name: str, value: Any) -> None`: Adds a custom metric.
+- `record_history(self) -> None`: Records the current state in the history.
+- `get_average_execution_time(self) -> Optional[float]`: Calculates the average execution time from history.
+- `__str__(self) -> str`: Returns a string representation of the performance data.
