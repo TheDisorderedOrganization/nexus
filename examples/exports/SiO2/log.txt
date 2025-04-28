@@ -10,10 +10,10 @@
   -%%+   :+##+:  =%@@@@@@%:=@@%- :#%%-  :+#%%%%*-   :%@@@@@@@#= 
     :              :-----:  :-     :       :::        -=+++=:   
     
-__version__ ➜  0.0.1
+__version__ ➜  2.0.0
 
 
-        Global Settings:
+        General Settings:
         ----------------
 	|- project_name: SiO2
 	|- export_directory: examples/exports/SiO2
@@ -23,7 +23,12 @@ __version__ ➜  0.0.1
 	|- verbose: True
 	|- save_logs: True
 	|- save_performance: True
-	|- general: GeneralSettings(project_name='Project', export_directory='exports', file_location='', range_of_frames=(0, -1), apply_pbc=False, verbose=False, save_logs=False, save_performance=False)
+	
+
+        Lattice Settings:
+        -----------------
+		|- apply_custom_lattice: False
+        
 	
         Clustering Settings:
         -----------------
@@ -39,16 +44,13 @@ __version__ ➜  0.0.1
 		|- print_mode: connectivity
 		|- with_coordination_number: True
 		|- coordination_mode: O
-		|- coordination_range: [6, 6]
+		|- coordination_range: [4, 6]
 		|- with_alternating: True
-		|- with_number_of_shared: True
-		|- shared_mode: O
-		|- shared_threshold: 2
         
 	
         Analysis Settings:
         -----------------
-		|- overwrite: False
+		|- overwrite: True
 		|- with_all: True
         
         

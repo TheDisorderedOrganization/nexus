@@ -2,8 +2,10 @@ from setuptools import setup, find_packages
 
 setup(
     name="nexus-cat",
-    version="2.0.0",
+    version="2.0.1",
     description="Nexus is a Cluster Analysing Toolkit package.",
+    long_description=open("README.md").read(),
+    long_description_content_type="text/markdown",
     author="The Disordered Organization",
     author_email="julien.perradin@protonmail.fr",
     url="https://github.com/TheDisorderedOrganization/nexus",
@@ -30,5 +32,4 @@ setup(
         "Topic :: Scientific/Engineering :: Visualization",
         "Operating System :: OS Independent",
     ],
-    project_description=open("README.md").read(),
 )
