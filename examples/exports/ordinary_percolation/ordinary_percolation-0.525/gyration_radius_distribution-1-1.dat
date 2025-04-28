@@ -1,7 +1,0 @@
-# Gyration Radius Results
-# Date: 2025-04-04 17:45:49.616124
-# Frames averaged: 1
-# Connectivity_type,Concentration,Cluster_size,Gyration_radius,Standard_deviation_ddof=1
-1-1,0.9874796632948999,6,0.9128709291752768,0.0
-1-1,0.9874796632948999,3,0.6666666666666666,0.0
-1-1,0.9874796632948999,2,0.5,0.0

@@ -1,7 +1,0 @@
-# Cluster Size Distribution ➜ 1 frames averaged.
-# Date: 2025-04-04 17:45:49.619354
-# Frames averaged: 1
-# Connectivity_type,Concentration,Cluster_size,N_clusters,Standard_deviation_ddof=1
-1-1,0.9874796632948999,6,1,0.0
-1-1,0.9874796632948999,3,1,0.0
-1-1,0.9874796632948999,2,14,0.0

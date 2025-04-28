@@ -26,7 +26,7 @@ config_analysis = c.AnalysisSettings(
 )
 
 # Path to the trajectory file
-rootdir = './examples/inputs/ordinary_percolation'
+rootdir = './examples/inputs/ordinary_percolation/50'
 parser = p.Parser(file_location=rootdir, format='xyz')
 files = parser.get_files()
 infos = parser.get_infos()
@@ -36,12 +36,13 @@ for i, file in enumerate(files):
     project_name = infos['project_name'][i]
     config_general = c.GeneralSettings(
         project_name=project_name,
-        export_directory='examples/exports/ordinary_percolation',
+        export_directory='examples/exports/ordinary_percolation/50',
         file_location=path,
         range_of_frames=(0, 0),
         apply_pbc=True,
         verbose=True,
-        save_logs=True
+        save_logs=True,
+        save_performance=True,
     )
     # Settings builder
     settings = (SettingsBuilder() \
