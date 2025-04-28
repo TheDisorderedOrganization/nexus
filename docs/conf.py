@@ -2,8 +2,8 @@
 
 # -- Project information -----------------------------------------------------
 project = "Nexus-cat"
-author = "Julien Perradin"
-release = "1.0.1"
+author = "TheDisorderedOrganization"
+release = "2.0.0"
 
 # -- General configuration ---------------------------------------------------
 extensions = [
