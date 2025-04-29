@@ -27,7 +27,7 @@
 - **Average cluster size** $\langle s \rangle$: $\langle s(p) \rangle = \sum_s \frac{s^2n_s(p)}{\sum_s s n_s(p)}$
   - with $n_s$ the number of clusters of size $s$ (ie number of polyhedra in the cluster).
   - 1 sized clusters and percolating clusters are not taken into account in the calculation.
-- **Biggest cluster size** $s_{max}$: largest cluster size in the system no matter the percolation threshold.
+- **Largest cluster size** $s_{max}$: largest cluster size in the system no matter the percolation threshold.
 - **Spanning cluster size** $s_{\infty}$ : largest cluster size in the system excluding the percolating cluster.
 - **Gyration radius** $R_g$ : $R_s² = \frac{1}{2s^2}\sum_{i,j}|\overrightarrow{r_i}-\overrightarrow{r_j}|^2$
   - with $r_i$ the **unwrapped** coordinates of the atom $_i$ in the cluster of size $s$. 
@@ -75,7 +75,7 @@ pip install nexus-cat --upgrade
 If you want to install the package from the source code to implement your extensions for example, you can clone the repository:
 
 ```bash
-git clone git@github.com:jperradin/nexus.git
+git clone git@github.com:TheDisorderedOrganization/nexus.git
 ```
 
 Then install the package in development mode:

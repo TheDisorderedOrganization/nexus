@@ -5,6 +5,7 @@ from typing import List, Dict, Optional
 from .node import Node
 from ..utils.geometry import wrap_positions
 from ..core.cluster import Cluster
+from ..config.settings import Settings
 
 @dataclass(slots=True)
 class Frame:
@@ -29,6 +30,7 @@ class Frame:
     lattice: np.ndarray
     _data: Dict[str, np.ndarray]
     clusters: Optional[List[Cluster]] = None
+    _settings: Settings = None
 
     def __post_init__(self):
         """ Initialisation after object creation """
@@ -114,14 +116,20 @@ class Frame:
             cluster.set_lattice(self.lattice)
         self.clusters = clusters
 
-    def get_concentration(self) -> float:
+    def get_concentration(self) -> Dict[int, float]:
         """ Get the concentrations of each cluster connectivity in the frame """
+        if self.clusters is None:
+            return {}
+        if self._settings.clustering.criteria == "distance" or self._settings.clustering.criteria == "bond":
+            networking_nodes = np.unique([self._settings.clustering.connectivity[0], self._settings.clustering.connectivity[-1]])
+            potential_sites = [node for node in self.nodes if node.symbol in networking_nodes]
+        
         concentrations = {}
         unique_connectivities = np.unique([c.get_connectivity() for c in self.clusters])
         for connectivity in unique_connectivities:
             for cluster in self.clusters:
                 if cluster.get_connectivity() == connectivity:
-                    concentrations[connectivity] = cluster.total_nodes / len(self.nodes)
+                    concentrations[connectivity] = cluster.total_nodes / len(potential_sites)
                     break
 
         return concentrations
