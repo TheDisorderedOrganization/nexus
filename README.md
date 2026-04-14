@@ -16,8 +16,10 @@ logo made by [Lisap](https://lisaperradinportfolio.framer.website/)
 - [Description and features](#description-and-features)
 - [Installation](#installation)
 - [Getting started](#getting-started)
-- [Architecture overview](#architecture-overview)
+- [Workflow](#workflow)
+- [Project structure](#project-structure)
 - [Documentation](#documentation)
+- [How to cite](#how-to-cite)
 - [Notes](#notes)
 - [License](#license)
 
@@ -100,7 +102,6 @@ A cluster is considered **percolating** if it spans all three dimensions.
 - **ClustersWriter**: Unwrapped cluster coordinates in XYZ format. Supports `"all"`, `"connectivity"`, `"individual"`, and `"none"` modes.
 - **LogsWriter**: Configuration and setup information.
 - **PerformanceWriter**: Timing, memory, and CPU metrics.
-- **MultipleFilesSummaryWriter**: Aggregated results across multiple runs.
 
 ---
 
@@ -150,6 +151,8 @@ pip install -e .
 ## Getting started
 
 The single entry point is `nexus.main(settings)`. Configure the analysis through `SettingsBuilder`, which validates all constraints before running.
+
+Create a script (e.g. `launch_nexus.py`) with the following content:
 
 ```python
 from nexus import SettingsBuilder, main
@@ -208,6 +211,12 @@ settings = (
 main(settings)
 ```
 
+Then run the script:
+
+```bash
+python launch_nexus.py
+```
+
 Individual analyzers can be enabled selectively instead of using `with_all`:
 
 ```python
@@ -219,7 +228,7 @@ config_analysis = c.AnalysisSettings(
 ```
 
 
-## Architecture overview
+## Workflow
 
 ```
 nexus.main(settings)
@@ -242,9 +251,90 @@ nexus.main(settings)
 The codebase uses the **factory pattern** throughout (strategies, analyzers, readers, writers) for extensibility. New strategies or analyzers can be added by inheriting the base class and registering in the corresponding factory.
 
 
+## Project structure
+
+```
+src/nexus/
+├── __init__.py                  # Public API exports
+├── main.py                      # Entry point and execution pipeline
+├── version.py                   # Package version
+│
+├── config/
+│   └── settings.py              # Settings dataclasses and SettingsBuilder
+│
+├── core/
+│   ├── node.py                  # Node (atom/particle) data model
+│   ├── frame.py                 # Single trajectory frame
+│   ├── cluster.py               # Cluster with percolation detection (period vectors)
+│   └── system.py                # Trajectory wrapper with lazy frame iteration
+│
+├── analysis/
+│   ├── analyzer_factory.py      # Creates analyzers from AnalysisSettings
+│   ├── strategy_factory.py      # Selects clustering strategy from ClusteringSettings
+│   │
+│   ├── analyzers/
+│   │   ├── base_analyzer.py                      # Abstract base class
+│   │   ├── average_cluster_size_analyzer.py       # <S> weight-average cluster size
+│   │   ├── largest_cluster_size_analyzer.py       # S_max
+│   │   ├── spanning_cluster_size_analyzer.py      # S_span (largest finite cluster)
+│   │   ├── gyration_radius_analyzer.py            # R_g binned by cluster size
+│   │   ├── correlation_length_analyzer.py         # xi from gyration radius distribution
+│   │   ├── percolation_probability_analyzer.py    # Pi (fraction of percolating frames)
+│   │   ├── order_parameter_analyzer.py            # P_inf per dimension
+│   │   ├── concentration_analyzer.py              # Networking-to-total node ratio
+│   │   └── cluster_size_distribution_analyzer.py  # n_s histogram
+│   │
+│   └── strategies/
+│       ├── base_strategy.py          # Abstract base class (union-find)
+│       ├── distance_strategy.py      # Simple distance cutoff
+│       ├── bond_strategy.py          # Three-node bridging pattern (e.g. Si-O-Si)
+│       ├── coordination_strategy.py  # Bonding + coordination number constraints
+│       ├── shared_strategy.py        # Coordination + shared bridging neighbors
+│       └── search/
+│           └── neighbor_searcher.py  # KD-tree spatial queries with PBC support
+│
+├── io/
+│   ├── parser/
+│   │   └── parser.py            # Frame parsing logic
+│   ├── reader/
+│   │   ├── base_reader.py       # Abstract base class (lazy indexing)
+│   │   ├── reader_factory.py    # Auto-detects format from file extension
+│   │   ├── xyz_reader.py        # Extended XYZ format
+│   │   └── lammps_reader.py     # LAMMPS dump format
+│   └── writer/
+│       ├── base_writer.py                   # Abstract base class
+│       ├── writer_factory.py                # Creates writers from settings
+│       ├── clusters_writer.py               # Unwrapped cluster coordinates (XYZ)
+│       ├── logs_writer.py                   # Configuration and setup logs
+│       └── performance_writer.py            # Timing, memory, CPU metrics
+│
+└── utils/
+    ├── aesthetics.py            # Terminal display formatting
+    ├── geometry.py              # Numba JIT-compiled geometry functions
+    └── performance.py           # Execution time and resource tracking
+```
+
+
 ## Documentation
 
 The documentation is available [here](https://nexus-cat.readthedocs.io/en/latest/).
+
+
+## How to cite
+
+If you use `nexus-cat` in your research, please cite the following paper:
+
+```bibtex
+@misc{perradin2026nexuscatcomputationalframeworkdefine,
+      title={Nexus-CAT: A Computational Framework to Define Long-Range Structural Descriptors in Glassy Materials from Percolation Theory},
+      author={Julien Perradin and Simona Ispas and Anwar Hasmy and Bernard Hehlen},
+      year={2026},
+      eprint={2604.11476},
+      archivePrefix={arXiv},
+      primaryClass={cond-mat.dis-nn},
+      url={https://arxiv.org/abs/2604.11476},
+}
+```
 
 
 ## Notes

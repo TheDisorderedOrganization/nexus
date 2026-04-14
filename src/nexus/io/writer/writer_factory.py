@@ -3,7 +3,6 @@ from .base_writer import BaseWriter
 from .clusters_writer import ClustersWriter
 from .logs_writer import LogsWriter
 from .performance_writer import PerformanceWriter
-from .multiple_files_summary_writer import MultipleFilesSummaryWriter
 from ...config.settings import Settings
 
 
@@ -31,7 +30,6 @@ class WriterFactory:
         self.register_writer(ClustersWriter)
         self.register_writer(LogsWriter)
         self.register_writer(PerformanceWriter)
-        self.register_writer(MultipleFilesSummaryWriter)
 
     def register_writer(self, writer: BaseWriter):
         """
@@ -60,7 +58,5 @@ class WriterFactory:
             return LogsWriter(self._settings)
         elif name == "PerformanceWriter":
             return PerformanceWriter(self._settings)
-        elif name == "MultipleFilesSummaryWriter":
-            return MultipleFilesSummaryWriter(self._settings, mode)
         else:
             return None

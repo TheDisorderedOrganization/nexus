@@ -29,7 +29,6 @@ Nexus-CAT provides a wide range of features for cluster analysis in atomistic si
 ### Visualization and Output
 
 - **XYZ Cluster Exporter**: The `ClustersWriter` generates XYZ files containing the unwrapped atomic coordinates of the clusters, which can be used for visualization in other software.
-- **Data Summaries**: The `MultipleFilesSummaryWriter` can be used to summarize data from multiple analysis files, making it easier to compare results across different simulations.
 - **Performance Metrics**: The `PerformanceWriter` saves detailed performance metrics, which can be useful for benchmarking and optimization.
 
 For a complete list of features, refer to the [API Reference](api_reference.md).
